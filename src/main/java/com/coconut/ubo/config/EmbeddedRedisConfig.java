@@ -1,3 +1,4 @@
+/*
 package com.coconut.ubo.config;
 
 import jakarta.annotation.PostConstruct;
@@ -8,9 +9,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import redis.embedded.RedisServer;
 
+*/
 /**
  * 로컬 환경일경우 내장 레디스가 실행됩니다.
- */
+ *//*
+
 @Profile("local") // local 환경에서만 실행되도록 설정
 @Configuration
 @Slf4j
@@ -38,4 +41,4 @@ public class EmbeddedRedisConfig {
             redisServer.stop();
         }
     }
-}
+}*/
