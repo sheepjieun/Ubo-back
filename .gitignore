@@ -38,4 +38,5 @@ out/
 
 
 ### yml ###
-application.yml
+#application.yml
+application-aws.yml

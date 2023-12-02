@@ -29,12 +29,10 @@ public class UserController {
      * 회원가입
      */
     @PostMapping("/signup")
-    public ResponseEntity<UserResponse> signUpUser(@ModelAttribute @Valid SignUpUserRequest request) throws IOException {
+    public ResponseEntity<String> signUpUser(@ModelAttribute @Valid SignUpUserRequest request) throws IOException {
 
-        UserResponse userResponse = userService.signUp(request);
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(userResponse);
+        userService.signUp(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
     }
 
     /**
