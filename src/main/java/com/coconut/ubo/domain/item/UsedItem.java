@@ -5,6 +5,7 @@ import com.coconut.ubo.web.dto.TimeAgo;
 import com.coconut.ubo.web.dto.item.UsedItemRequest;
 import com.coconut.ubo.web.dto.item.UsedItemResponse;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

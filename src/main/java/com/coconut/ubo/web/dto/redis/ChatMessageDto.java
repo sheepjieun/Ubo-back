@@ -1,6 +1,5 @@
 package com.coconut.ubo.web.dto.redis;
 
-import com.coconut.ubo.domain.chat.Chat;
 import lombok.*;
 
 /**
@@ -11,11 +10,10 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatDto {
+public class ChatMessageDto {
 
     private String roomId;      // 채팅방 ID
     private Long sender;
     private String message;
     private String createdAt;
-
 }

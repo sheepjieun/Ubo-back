@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ChatResponse {
+public class ChatRoomResponse {
 
     private Long id;
     private String roomId;
@@ -24,9 +24,6 @@ public class ChatResponse {
     private String message;
     private LocalDateTime createdAt;
 
-    public ChatResponse(String roomId) {
-        this.roomId = roomId;
-    }
 }
 
 // 빌더로 엔티티 -> dto 생성하기

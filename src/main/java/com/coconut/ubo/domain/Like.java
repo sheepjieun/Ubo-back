@@ -3,13 +3,20 @@ package com.coconut.ubo.domain;
 import com.coconut.ubo.domain.item.Item;
 import com.coconut.ubo.domain.user.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class Likes {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "likes")
+public class Like {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id")

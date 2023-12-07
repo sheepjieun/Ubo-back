@@ -2,6 +2,7 @@ package com.coconut.ubo.domain.user;
 
 import com.coconut.ubo.web.dto.user.UserResponse;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 
@@ -20,7 +21,6 @@ public class User {
     private String loginId;
     private String email;
     private String password;
-    private String image;
     private String nickname;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,22 +31,20 @@ public class User {
     private UserStatus status; //회원 인증 상태
 
     // user 응답 엔티티 생성
-    public UserResponse toUserResponse(String imageUrl) {
+    public UserResponse toUserResponse() {
         return new UserResponse(
                 this.getId(),
                 this.getLoginId(),
                 this.getEmail(),
                 this.getNickname(),
                 this.college.getName(),
-                imageUrl,
                 this.getStatus()
         );
     }
 
     // user 회원 수정 메서드
-    public void updateUser(String nickname, String image) {
+    public void updateUser(String nickname) {
         this.nickname = nickname;
-        this.image = image;
     }
 
     public void updatePassword(String password) {

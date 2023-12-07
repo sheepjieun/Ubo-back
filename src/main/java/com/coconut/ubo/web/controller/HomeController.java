@@ -5,11 +5,9 @@ import com.coconut.ubo.domain.user.User;
 import com.coconut.ubo.service.item.ItemServiceImpl;
 import com.coconut.ubo.service.user.UserServiceImpl;
 import com.coconut.ubo.web.argumentresolver.Login;
-import com.coconut.ubo.web.dto.item.HomeResponse;
 import com.coconut.ubo.web.dto.item.ItemListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,13 +22,15 @@ public class HomeController {
     private final UserServiceImpl userService;
 
     /**
-     * 메인 페이지
+     * 메인 페이지 - 실시간 인기
      */
-    @GetMapping("/")
-    public ResponseEntity<?> loadHome(@Login User loginUser) {
+    @GetMapping("/home/popular")
+    public ResponseEntity<?> loadHomePopular(@Login User loginUser) {
 
-        log.info("메인 페이지에서 로그인한 유저 정보 : {}", loginUser.getLoginId());
-
+        List<ItemListResponse> popularItems = itemService.getPopularItems();
+        return ResponseEntity.ok(popularItems);
+    }
+/*
         if (userService.isUserLoggedIn(loginUser)) {
             //TODO 인기물품 조회 로직 null 에러남
             List<Item> usedItems = itemService.getFilteredItems(null, "used", "new", true);
@@ -46,24 +46,68 @@ public class HomeController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
+
+    /**
+     * 메인 페이지 - 최신 중고거래
+     */
+    @GetMapping("/home/used")
+    public ResponseEntity<?> loadHomeUsed(@Login User loginUser) {
+
+        List<Item> usedItems = itemService.getFilteredItems(null, "used", "new", true);
+        List<ItemListResponse> usedItemsResponse = itemService.getItemListResponses(usedItems, null);
+        return ResponseEntity.ok(usedItemsResponse);
     }
 
     /**
-     * 물품 검색
+     * 메인 페이지 - 최신 대여
      */
-    @GetMapping("/search")
-    public ResponseEntity<?> searchItems(
+    @GetMapping("/home/rental")
+    public ResponseEntity<?> loadHomeRental(@Login User loginUser) {
+
+        List<Item> rentalItems = itemService.getFilteredItems(null, "rental", "new", true);
+        List<ItemListResponse> rentalItemsResponses = itemService.getItemListResponses(rentalItems, null);
+        return ResponseEntity.ok(rentalItemsResponses);
+    }
+
+
+    /**
+     * 물품 검색 - 중고거래
+     */
+    @GetMapping("/search/used")
+    public ResponseEntity<?> searchUsedItems(
             @Login User loginUser,
             @RequestParam String q,
-            @RequestParam(defaultValue = "used") String trade,
             @RequestParam(defaultValue = "new") String sort,
             @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
 
+        List<Item> items = itemService.getFilteredItems(q, "used", sort, tradeAvailOnly);
+        return ResponseEntity.ok(itemService.getItemListResponses(items, null));
+    }
+
+/*
         if (userService.isUserLoggedIn(loginUser)) {
             List<Item> items = itemService.getFilteredItems(q, trade, sort, tradeAvailOnly);
             return ResponseEntity.ok(itemService.getItemListResponses(items, null));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
+
+    /**
+     * 물품 검색 - 중고거래
+     */
+    @GetMapping("/search/rental")
+    public ResponseEntity<?> searchRentalItems(
+            @Login User loginUser,
+            @RequestParam String q,
+            @RequestParam(defaultValue = "new") String sort,
+            @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
+
+        List<Item> items = itemService.getFilteredItems(q, "rental", sort, tradeAvailOnly);
+        return ResponseEntity.ok(itemService.getItemListResponses(items, null));
     }
+
+
+
 }

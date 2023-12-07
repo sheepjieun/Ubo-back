@@ -4,10 +4,12 @@ import com.coconut.ubo.domain.item.Category;
 import com.coconut.ubo.domain.item.ItemStatus;
 import com.coconut.ubo.domain.item.Trace;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 @Data
+@Builder
 @AllArgsConstructor
 public class UsedItemResponse {
 
@@ -15,7 +17,7 @@ public class UsedItemResponse {
     private String userNickname;
     private ItemStatus status; // 거래 상태
     private String title;
-    private int price;
+    private String price;
     private Category category;
     private String description;
     private String major;

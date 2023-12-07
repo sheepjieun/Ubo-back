@@ -1,6 +1,7 @@
 package com.coconut.ubo.web.dto.item;
 
 import com.coconut.ubo.domain.item.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,11 +13,12 @@ import java.util.List;
 public class UsedItemRequest implements ItemImageRequest {//중고거래 Request 데이터
 
     private String title;
-    private int price;
-//    private String price2;
+    private String price;
     private Category category;
+
     private String description;
     private String major;
+
     private List<MultipartFile> images;
 
     //서적 관련 필드

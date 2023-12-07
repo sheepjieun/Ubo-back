@@ -41,14 +41,11 @@ public class UserServiceImpl implements UserService{
 
         String loginId =  validateDuplicateUser(request); //중복 회원 검증
         College college = validateCollegeName(request); //학교 유효성 검증
-        String imageUrl = s3Uploader.upload(request.getImage(), "profile-images");
 
-        User newUser = userMapper.toEntity(request, loginId, college, imageUrl);
-
+        User newUser = userMapper.toEntity(request, loginId, college);
         userRepository.save(newUser); //회원 저장
 
-        // UserResponse 객체 생성 및 반환
-        return newUser.toUserResponse(imageUrl);
+        return newUser.toUserResponse(); // UserResponse 객체 생성 및 반환
     }
 
     /**
@@ -70,25 +67,17 @@ public class UserServiceImpl implements UserService{
      * 회원 정보 업데이트
      */
     @Transactional
-    public UserResponse update(Long id, UpdateUserRequest request) throws IOException {
+    public void update(User user, UpdateUserRequest request) throws IOException {
 
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        String imageUrl = s3Uploader.upload(request.getImage(), "profile-images");
-
-        user.updateUser(request.getNickname(), imageUrl); // User 업데이트
+        user.updateUser(request.getNickname()); // User 업데이트
         userRepository.save(user); // User 저장
-
-        // UserResponse 객체 생성 및 반환
-        return user.toUserResponse(imageUrl);
     }
 
     /**
      * 회원 비밀번호 업데이트
      */
     @Transactional
-    public void updatePassword(Long id, UpdateUserPasswordRequest request) {
-
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+    public void updatePassword(User user, UpdateUserPasswordRequest request) {
 
         // 현재 비밀번호 확인
         if(!request.getCurrentPassword().equals(user.getPassword())) {

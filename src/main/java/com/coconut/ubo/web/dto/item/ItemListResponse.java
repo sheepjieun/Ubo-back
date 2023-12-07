@@ -2,6 +2,7 @@ package com.coconut.ubo.web.dto.item;
 
 import com.coconut.ubo.domain.item.Category;
 import com.coconut.ubo.domain.item.ItemStatus;
+import com.coconut.ubo.domain.item.TradeType;
 import lombok.Value;
 
 import java.io.Serializable;
@@ -12,8 +13,9 @@ import java.io.Serializable;
 @Value
 public class ItemListResponse implements Serializable {
     Long id;
+    String tradeType;
     String title;
-    int price;
+    String price;
     String major;
     ItemStatus itemStatus;
     String image;

@@ -27,6 +27,8 @@ public class RentalItemMapper {
                 .major(request.getMajor())
                 .viewCount(0)
                 .likeCount(0)
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
                 .createAt(LocalDateTime.now())
                 .updateAt(null)
                 .itemStatus(ItemStatus.RENT_AVAIL)
@@ -46,6 +48,8 @@ public class RentalItemMapper {
                 rentalItem.getMajor(),
                 rentalItem.getLikeCount(),
                 rentalItem.getViewCount(),
+                rentalItem.getStartDate(),
+                rentalItem.getEndDate(),
                 timeAgo,
                 imageUrls
         );

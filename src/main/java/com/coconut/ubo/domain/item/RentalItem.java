@@ -1,19 +1,16 @@
 package com.coconut.ubo.domain.item;
 
-import com.coconut.ubo.web.dto.TimeAgo;
 import com.coconut.ubo.web.dto.item.RentalItemRequest;
-import com.coconut.ubo.web.dto.item.RentalItemResponse;
-import com.coconut.ubo.web.dto.item.UsedItemRequest;
-import com.coconut.ubo.web.dto.item.UsedItemResponse;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.time.ZoneId;
-import java.util.List;
+import java.time.LocalDate;
+
 
 @Entity
 @Getter
@@ -23,7 +20,9 @@ import java.util.List;
 @DiscriminatorValue("R")
 public class RentalItem extends Item{
 
-    private int deposit; //보증금
+    private String deposit; //보증금
+    private LocalDate startDate; //대여 시작 가능 날짜
+    private LocalDate endDate; //대여 반납 가능 날짜
 
     // RentalItem 수정 메서드
     public void updateRentalItem(RentalItemRequest request) {
@@ -32,6 +31,8 @@ public class RentalItem extends Item{
         this.price = request.getPrice();
         this.description = request.getDescription();
         this.major = request.getMajor();
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
     }
 
 }

@@ -47,3 +47,6 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.orm.jdbc.bind: trace #스프링 부트 3.x, hibernate6
+  org.springframework.web.socket: debug
+  com.coconut.ubo.config: debug
+  com.coconut.ubo.web.controller: debug

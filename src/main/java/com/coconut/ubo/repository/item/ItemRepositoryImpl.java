@@ -20,6 +20,9 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
+    private final double viewWeight = 10; // 조회수 가중치 설정
+    private final double likeWeight = 10; // 좋아요 가중치 설정
+
 
     @Override
     public List<Item> findPopularItems(Pageable pageable) {
@@ -30,7 +33,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 
         List<Item> items = queryFactory
                 .selectFrom(item)
-                .where(item.viewCount.multiply(0.5).add(item.likeCount.multiply(0.5)).gt(0))
+                .where(item.viewCount.multiply(likeWeight).add(item.likeCount.multiply(likeWeight)).gt(0))
                 .fetch();
 
         for (Item currentItem : items) {
@@ -42,8 +45,8 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
         return queryFactory.selectFrom(item)
                 .leftJoin(usedItem).on(item.id.eq(usedItem.id))
                 .leftJoin(rentalItem).on(item.id.eq(rentalItem.id))
-                .where(item.viewCount.multiply(0.5).add(item.likeCount.multiply(0.5)).gt(0)) // 'Item'의 조회수와 좋아요 수를 가중치를 적용하여 계산한 값이 0보다 큰 경우에만 결과에 포함
-                .orderBy(item.viewCount.multiply(0.5).add(item.likeCount.multiply(0.5)).desc()) // 계산된 점수에 따라 내림차순으로 정렬
+                .where(item.viewCount.multiply(viewWeight).add(item.likeCount.multiply(likeWeight)).gt(0)) // 'Item'의 조회수와 좋아요 수를 가중치를 적용하여 계산한 값이 0보다 큰 경우에만 결과에 포함
+                .orderBy(item.viewCount.multiply(viewWeight).add(item.likeCount.multiply(likeWeight)).desc()) // 계산된 점수에 따라 내림차순으로 정렬
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

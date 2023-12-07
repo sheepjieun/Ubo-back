@@ -45,29 +45,29 @@ public class UsedItemMapper {
     }
     public UsedItemResponse toDto(UsedItem usedItem, List<String> imageUrls) {
 
-        //TODO 물품 상세 페이지 판매자 닉네임 null값 에러
-        log.info("중고거래 물품의 판매자 닉네임: {}", usedItem.getSeller().getNickname());
-
         String timeAgo = TimeAgo.timeAgo(usedItem.getCreateAt().atZone(ZoneId.systemDefault()).toInstant());
-        return new UsedItemResponse(
-                usedItem.getId(),
-                usedItem.getSeller().getNickname(),
-                usedItem.getItemStatus(),
-                usedItem.getTitle(),
-                usedItem.getPrice(),
-                usedItem.getCategory(),
-                usedItem.getDescription(),
-                usedItem.getMajor(),
-                usedItem.getLikeCount(),
-                usedItem.getViewCount(),
-                timeAgo,
-                usedItem.getUnderlineTrace(),
-                usedItem.getWritingTrace(),
-                usedItem.getCoverCondition(),
-                usedItem.getNameWritten(),
-                usedItem.getPageDiscoloration(),
-                usedItem.getPageDamage(),
-                imageUrls
-        );
+
+        return UsedItemResponse.builder()
+                .itemId(usedItem.getId())
+                .userNickname(usedItem.getSeller().getNickname())
+                .status(usedItem.getItemStatus())
+                .title(usedItem.getTitle())
+                .price(usedItem.getPrice())
+                .category(usedItem.getCategory())
+                .description(usedItem.getDescription())
+                .major(usedItem.getMajor())
+                .likeCount(usedItem.getLikeCount())
+                .viewCount(usedItem.getViewCount())
+                .timeAgo(timeAgo)
+
+                .underlineTrace(usedItem.getUnderlineTrace())
+                .writingTrace(usedItem.getWritingTrace())
+                .coverCondition(usedItem.getCoverCondition())
+                .nameWritten(usedItem.getNameWritten())
+                .pageDiscoloration(usedItem.getPageDiscoloration())
+                .pageDamage(usedItem.getPageDamage())
+
+                .images(imageUrls)
+                .build();
     }
 }

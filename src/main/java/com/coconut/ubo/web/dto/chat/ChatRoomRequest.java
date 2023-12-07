@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatRequest {
+public class ChatRoomRequest {
 
-    private Long seller;        // 물품 판매자 id
+    private Long sellerId;        // 물품 판매자 id
     private Long itemId;        // 물품 id
 
 }

@@ -7,6 +7,8 @@ import com.coconut.ubo.domain.item.*;
 import com.coconut.ubo.repository.image.ImageDetailRepository;
 import com.coconut.ubo.repository.image.ImageSetRepository;
 import com.coconut.ubo.repository.item.ItemRepository;
+import com.coconut.ubo.repository.item.ItemRepositoryCustom;
+import com.coconut.ubo.repository.user.LikeRepository;
 import com.coconut.ubo.repository.user.UserRepository;
 import com.coconut.ubo.service.S3Uploader;
 import com.coconut.ubo.web.mapper.ItemListResponseMapper;
@@ -29,13 +31,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 @RequiredArgsConstructor
 @Slf4j
 public class ItemServiceImpl implements ItemService{
 
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final LikeRepository likeRepository;
     private final S3Uploader s3Uploader;
     private final ImageSetRepository imageSetRepository;
     private final ImageDetailRepository imageDetailRepository;
@@ -48,9 +51,7 @@ public class ItemServiceImpl implements ItemService{
      */
     @Transactional
     @Override
-    public UsedItemResponse saveUsedItem(UsedItemRequest request) throws IOException {
-
-        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+    public UsedItemResponse saveUsedItem(User user, UsedItemRequest request) throws IOException {
 
         UsedItem usedItem = usedItemMapper.toEntity(request, user); // DTO -> UsedItem 엔티티 변환 및 저장
         itemRepository.save(usedItem);
@@ -69,9 +70,7 @@ public class ItemServiceImpl implements ItemService{
      */
     @Transactional
     @Override
-    public RentalItemResponse saveRentalItem(RentalItemRequest request) throws IOException {
-
-        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new); // 이건 임시코드다!!
+    public RentalItemResponse saveRentalItem(User user, RentalItemRequest request) throws IOException {
 
         RentalItem rentalItem = rentalItemMapper.toEntity(request, user);
         itemRepository.save(rentalItem);
@@ -81,7 +80,11 @@ public class ItemServiceImpl implements ItemService{
 
         List<String> imageUrls = uploadAndSaveItemImages(request, imageSet);
 
+        log.info("대여물품 등록 시 startDate : {}", rentalItem.getStartDate());
+        log.info("대여물품 등록 시 endDate : {}", rentalItem.getEndDate());
+
         return rentalItemMapper.toDto(rentalItem, imageUrls);
+
     }
 
 
@@ -97,6 +100,8 @@ public class ItemServiceImpl implements ItemService{
                 .map(item -> (UsedItem) item) // Item 객체가 UsedItem의 인스턴스인 경우에만 map 연산을 수행하여 UsedItem으로 변환
                 .orElseThrow(EntityNotFoundException::new); // Optional 객체가 null일 경우 예외 발생
 
+//        usedItem.getSeller().getId();
+
         ImageSet imageSet = imageSetRepository.findByItem(usedItem).orElseThrow(EntityNotFoundException::new); // 기존 ImageSet 조회
         deleteImageDetail(imageSet); // 기존 ImageDetail 삭제
         List<String> imageUrls = uploadAndSaveItemImages(request, imageSet); // 새 ImageDetail 엔티티 생성하고 S3에 업로드
@@ -110,9 +115,9 @@ public class ItemServiceImpl implements ItemService{
      */
     @Transactional
     @Override
-    public RentalItemResponse updateRentalItem(Long id, RentalItemRequest request) throws IOException {
+    public RentalItemResponse updateRentalItem(Long itemId, RentalItemRequest request) throws IOException {
 
-        RentalItem rentalItem = itemRepository.findById(id)
+        RentalItem rentalItem = itemRepository.findById(itemId)
                 .filter(item -> item instanceof RentalItem)
                 .map(item -> (RentalItem) item)
                 .orElseThrow(EntityNotFoundException::new);
@@ -128,18 +133,35 @@ public class ItemServiceImpl implements ItemService{
     }
 
     /**
-     * 물품 조회 - 거래 타입, 거래 가능만, 물품 정렬
+     * 물품 조회 - 물품 검색, 거래 타입, 물품 정렬, 거래 가능만
      */
     public List<Item> getFilteredItems(String search, String trade, String sort, boolean tradeAvailOnly) {
 
         if ("used".equalsIgnoreCase(trade)) {
-            return itemRepository.findAllWithFilters(search, UsedItem.class, sort, tradeAvailOnly);
+            return itemRepository.findAllWithFilters(null, search, UsedItem.class, sort, tradeAvailOnly);
         } else if ("rental".equalsIgnoreCase(trade)) {
-            return itemRepository.findAllWithFilters(search, RentalItem.class, sort, tradeAvailOnly);
+            return itemRepository.findAllWithFilters(null, search, RentalItem.class, sort, tradeAvailOnly);
         } else {
             throw new IllegalArgumentException("물품 거래 타입이 잘못 표시되었습니다.");
         }
     }
+
+    /**
+     *
+     * 마이페이지 - 판매 목록 조회 - 유저 아이디, 거래 타입, 물품 정렬, 거래 가능만
+     */
+    public List<Item> getMyFilteredItems(Long userId, String trade, String sort, boolean tradeAvailOnly) {
+
+        if ("used".equalsIgnoreCase(trade)) {
+            return itemRepository.findAllWithFilters(userId, null, UsedItem.class, sort, tradeAvailOnly);
+        } else if ("rental".equalsIgnoreCase(trade)) {
+            return itemRepository.findAllWithFilters(userId, null, RentalItem.class, sort, tradeAvailOnly);
+        } else {
+            throw new IllegalArgumentException("물품 거래 타입이 잘못 표시되었습니다.");
+        }
+    }
+
+
 
     /**
      * 이미지들을 S3에 업로드 및 ImageDetial 엔티티 생성
@@ -201,6 +223,11 @@ public class ItemServiceImpl implements ItemService{
                 .collect(Collectors.toList());
     }
 
+    // 상품의 like_count 증가 메서드
+    public void incrementLikeCount(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
+        item.incrementLikeCount();
+        itemRepository.save(item);
+    }
 
 }
-

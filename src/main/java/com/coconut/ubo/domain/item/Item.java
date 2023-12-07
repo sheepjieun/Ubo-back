@@ -2,6 +2,7 @@ package com.coconut.ubo.domain.item;
 
 import com.coconut.ubo.domain.user.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,11 +26,9 @@ public abstract class Item {
     private Long id;
 
     String title;
-    int price;
-//    String price2;
+    String price;
     String description;
     String major; //학과
-
     @CreationTimestamp
     LocalDateTime createAt;
     @UpdateTimestamp
@@ -50,5 +49,16 @@ public abstract class Item {
     public void setSeller(User user) {
         this.seller = user;
     }
+
+    //관심수 증가
+    public void incrementLikeCount() {
+        this.likeCount++;
+    }
+
+    //조회수 증가
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
+
 
 }

@@ -1,6 +1,6 @@
 package com.coconut.ubo.service.redis;
 
-import com.coconut.ubo.web.dto.redis.ChatDto;
+import com.coconut.ubo.web.dto.redis.ChatMessageDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,16 +28,15 @@ public class RedisSubscriber implements MessageListener {
         // onMessage : Redis 의 Pub/Sub 구독자로부터 메시지를 수신할 때마다 호출됨
         // pattern : Redis 에서 메시지를 수신한 패턴(특정 채널 이름)
 
+        log.info("[onMessage 메서드] message : {}", message);
+
         try {
             // redis에서 발행된 데이터를 받아 역직렬화(deserialize)
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-
             // Chat 객채로 맵핑. objectMapper: JSON 데이터를 Java 객체로 변환
-            ChatDto chatDto = objectMapper.readValue(publishMessage, ChatDto.class);
-
-            // Websocket 구독자에게 채팅 메시지 Send
-            // "/sub/chat/room/{roomId}" 로 특정 쪽지방에 메시지를 전송
-            messagingTemplate.convertAndSend("/sub/chat/room/" + chatDto.getRoomId(), chatDto);
+            ChatMessageDto chatMessageDto = objectMapper.readValue(publishMessage, ChatMessageDto.class);
+            // "/sub/chat/room/{roomId}"로 Websocket 구독자에게 메시지 전송
+            messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessageDto.getRoomId(), chatMessageDto);
         } catch (Exception e) {
             log.error(e.getMessage());
         }

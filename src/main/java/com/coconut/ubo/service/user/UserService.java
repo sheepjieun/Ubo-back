@@ -11,6 +11,6 @@ import java.io.IOException;
 public interface UserService {
 
     UserResponse signUp(SignUpUserRequest signUpUserRequest) throws IOException;
-    UserResponse update(Long id, UpdateUserRequest request) throws IOException;
-    void updatePassword(Long id, UpdateUserPasswordRequest request);
+    void update(User user, UpdateUserRequest request) throws IOException;
+    void updatePassword(User user, UpdateUserPasswordRequest request);
 }

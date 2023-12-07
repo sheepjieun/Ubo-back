@@ -31,7 +31,7 @@ public class InitDb {
 
         public void dbInit() {
 
-//            //학교
+            //학교
 //            College college1 = new College("명지전문대학교");
 //            College college2 = new College("고려대학교");
 //            College college3 = new College("연세대학교");
@@ -41,8 +41,8 @@ public class InitDb {
 //            em.persist(college3);
 //
 //            //User
-//            User user1 = User.builder().loginId("sheepjieun").email("sheepjieun@example.com").password("1234").image("image_url").nickname("임시닉넴").college(college1).status(ACTIVE).build();
-//            User user2 = User.builder().loginId("janojo").email("janojo@example.com").password("1234").image("image_url").nickname("양지은").college(college2).status(ACTIVE).build();
+//            User user1 = User.builder().loginId("sheepjieun").email("sheepjieun@example.com").password("1234").nickname("꼬됴").college(college1).status(ACTIVE).build();
+//            User user2 = User.builder().loginId("janoho").email("janojo@example.com").password("1234").nickname("양지은").college(college2).status(ACTIVE).build();
 //
 //            em.persist(user1);
 //            em.persist(user2);

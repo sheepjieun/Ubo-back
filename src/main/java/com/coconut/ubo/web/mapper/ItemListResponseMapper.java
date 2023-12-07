@@ -20,8 +20,9 @@ public class ItemListResponseMapper {
     private final ImageSetRepository imageSetRepository;
 
     public ItemListResponse toDto(Item item, Category category) {
+
         // Category가 제공되지 않았거나, UsedItem의 Category가 일치하는 경우에만 처리
-        if (category == null || (item instanceof UsedItem && ((UsedItem) item).getCategory().equals(category))) {
+        if (category == null || (item instanceof UsedItem && ((UsedItem)item).getCategory().equals(category))) {
             ImageSet imageSet = imageSetRepository.findByItem(item).orElseThrow(EntityNotFoundException::new);
             String imageUrl;
 
@@ -34,8 +35,17 @@ public class ItemListResponseMapper {
 
             String timeAgo = TimeAgo.timeAgo(item.getCreateAt().atZone(ZoneId.systemDefault()).toInstant());
 
+            // 거래 분류
+            String tradeType;
+            if (item instanceof UsedItem) {
+                tradeType = "중고거래";
+            } else {
+                tradeType = "대여";
+            }
+
             return new ItemListResponse(
                     item.getId(),
+                    tradeType,
                     item.getTitle(),
                     item.getPrice(),
                     item.getMajor(),

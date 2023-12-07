@@ -30,6 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(3600); // 1 hour
     }
 
+/*
     // Argument Resolver 추가
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
@@ -51,5 +52,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/css/**", "/*.ico", "/error" );
         WebMvcConfigurer.super.addInterceptors(registry);
     }
+*/
 
 }

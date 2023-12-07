@@ -8,14 +8,13 @@ import com.coconut.ubo.domain.item.UsedItem;
 import com.coconut.ubo.domain.user.User;
 import com.coconut.ubo.repository.image.ImageSetRepository;
 import com.coconut.ubo.repository.item.ItemRepository;
+import com.coconut.ubo.repository.user.UserRepository;
 import com.coconut.ubo.service.item.ItemServiceImpl;
-import com.coconut.ubo.service.user.UserServiceImpl;
 import com.coconut.ubo.web.argumentresolver.Login;
 import com.coconut.ubo.web.dto.item.*;
 import com.coconut.ubo.web.mapper.UsedItemMapper;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static com.coconut.ubo.common.SessionConst.LOGIN_USER;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,9 +35,9 @@ public class UsedController {
 
     private final ImageSetRepository imageSetRepository;
     private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
     private final ItemServiceImpl itemService;
     private final UsedItemMapper usedItemMapper;
-    private final UserServiceImpl userService;
 
     /**
      * 물품 등록
@@ -50,29 +46,50 @@ public class UsedController {
     public ResponseEntity<?> createItem(@Login User loginUser,
                                                        @ModelAttribute @Valid UsedItemRequest request) throws IOException {
 
+        // 세션 대신 하드코딩
+        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+
+        UsedItemResponse usedItemResponse = itemService.saveUsedItem(user, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usedItemResponse);
+
+
+/*
         if (userService.isUserLoggedIn(loginUser)) {
             UsedItemResponse usedItemResponse = itemService.saveUsedItem(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(usedItemResponse);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
     }
 
 
     /**
      * 물품 수정
      */
-    @PutMapping("/{id}")
+    @PutMapping("/{itemId}")
     public ResponseEntity<?> updateItem(@Login User loginUser,
-                                                       @PathVariable("id") Long id,
+                                                       @PathVariable("itemId") Long itemId,
                                                        @ModelAttribute @Valid UsedItemRequest request) throws IOException {
+        // 세션 대신 하드코딩
+        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
 
+        Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
+        if (user == item.getSeller()) {
+            UsedItemResponse usedItemResponse = itemService.updateUsedItem(itemId, request);
+            return ResponseEntity.status(HttpStatus.OK).body(usedItemResponse);
+
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("판매자만 수정이 가능합니다.");
+        }
+/*
         if (userService.isUserLoggedIn(loginUser)) {
             UsedItemResponse usedItemResponse = itemService.updateUsedItem(id, request);
             return ResponseEntity.status(HttpStatus.OK).body(usedItemResponse);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
     }
 
     /**
@@ -85,6 +102,11 @@ public class UsedController {
             @RequestParam(defaultValue = "new") String sort,
             @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
 
+        List<Item> items = itemService.getFilteredItems(null,  "used", sort, tradeAvailOnly);
+        return ResponseEntity.ok(itemService.getItemListResponses(items, null));
+
+
+/*
         log.info("중고거래 페이지 - 로그인한 유저 정보 : {}", loginUser.getLoginId());
 
         HttpSession session = request.getSession(false);
@@ -100,6 +122,7 @@ public class UsedController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
     }
 
     @GetMapping("/book")
@@ -108,12 +131,18 @@ public class UsedController {
             @RequestParam(defaultValue = "new") String sort,
             @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
 
+        List<Item> items = itemService.getFilteredItems(null,"used", sort, tradeAvailOnly);
+        return ResponseEntity.ok(itemService.getItemListResponses(items, Category.BOOK));
+
+
+/*
         if (userService.isUserLoggedIn(loginUser)) {
             List<Item> items = itemService.getFilteredItems(null,"used", sort, tradeAvailOnly);
             return ResponseEntity.ok(itemService.getItemListResponses(items, Category.BOOK));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
     }
 
     @GetMapping("/tool")
@@ -122,12 +151,18 @@ public class UsedController {
             @RequestParam(defaultValue = "new") String sort,
             @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
 
+        List<Item> items = itemService.getFilteredItems(null, "used", sort, tradeAvailOnly);
+        return ResponseEntity.ok(itemService.getItemListResponses(items, Category.TOOL));
+
+
+/*
         if (userService.isUserLoggedIn(loginUser)) {
             List<Item> items = itemService.getFilteredItems(null, "used", sort, tradeAvailOnly);
             return ResponseEntity.ok(itemService.getItemListResponses(items, Category.TOOL));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
     }
 
     @GetMapping("/etc")
@@ -136,12 +171,18 @@ public class UsedController {
             @RequestParam(defaultValue = "new") String sort,
             @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
 
+        List<Item> items = itemService.getFilteredItems(null,"used", sort, tradeAvailOnly);
+        return ResponseEntity.ok(itemService.getItemListResponses(items, Category.ETC));
+
+
+/*
         if (userService.isUserLoggedIn(loginUser)) {
             List<Item> items = itemService.getFilteredItems(null,"used", sort, tradeAvailOnly);
             return ResponseEntity.ok(itemService.getItemListResponses(items, Category.ETC));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
     }
 
     @GetMapping("/house")
@@ -150,12 +191,18 @@ public class UsedController {
             @RequestParam(defaultValue = "new") String sort,
             @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
 
+        List<Item> items = itemService.getFilteredItems(null, "used", sort, tradeAvailOnly);
+        return ResponseEntity.ok(itemService.getItemListResponses(items, Category.HOUSE));
+
+
+/*
         if (userService.isUserLoggedIn(loginUser)) {
             List<Item> items = itemService.getFilteredItems(null, "used", sort, tradeAvailOnly);
             return ResponseEntity.ok(itemService.getItemListResponses(items, Category.HOUSE));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
     }
 
     @GetMapping("/buy")
@@ -164,21 +211,44 @@ public class UsedController {
             @RequestParam(defaultValue = "new") String sort,
             @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
 
+        List<Item> items = itemService.getFilteredItems(null,"used", sort, tradeAvailOnly);
+        return ResponseEntity.ok(itemService.getItemListResponses(items, Category.BUY));
+
+
+/*
         if (userService.isUserLoggedIn(loginUser)) {
             List<Item> items = itemService.getFilteredItems(null,"used", sort, tradeAvailOnly);
             return ResponseEntity.ok(itemService.getItemListResponses(items, Category.BUY));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
     }
 
     /**
      * 물품 상세 페이지
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{itemId}")
     @Transactional
-    public ResponseEntity<?> getUsedItem(@Login User loginUser, @PathVariable("id") Long id) throws IOException {
+    public ResponseEntity<?> getUsedItem(@Login User loginUser, @PathVariable("itemId") Long itemId) throws IOException {
 
+        Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
+
+        //조회수 증가
+        item.incrementViewCount();
+
+        if (!(item instanceof UsedItem usedItem)) { //Item 인스턴스가 UsedItem인지 확인
+            throw new IllegalArgumentException("Item is not a UsedItem");
+        }
+
+        //해당 엔티티의 ImageSet에 연관된 ImageDetail 목록에서 ImageURL 추출
+        ImageSet imageSet = imageSetRepository.findByItem(usedItem).orElseThrow(EntityNotFoundException::new);
+        List<String> imageUrls = imageSet.getImageDetails().stream().map(ImageDetail::getFileUrl).collect(Collectors.toList());
+        UsedItemResponse usedItemResponse = usedItemMapper.toDto(usedItem, imageUrls);
+
+        return ResponseEntity.ok(usedItemResponse);
+
+/*
         if (userService.isUserLoggedIn(loginUser)) {
             Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
@@ -195,6 +265,7 @@ public class UsedController {
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
+*/
 
     }
 

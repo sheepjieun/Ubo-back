@@ -3,6 +3,7 @@ package com.coconut.ubo.repository.item;
 import com.coconut.ubo.domain.item.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.util.StringUtils;
@@ -12,10 +13,18 @@ import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredicateExecutor<Item>, ItemRepositoryCustom {
 
-    default List<Item> findAllWithFilters(String search, Class<? extends Item> trade, String sort, boolean tradeAvailOnly) {
+    default List<Item> findAllWithFilters(Long userId,
+                                          String search,
+                                          Class<? extends Item> trade,
+                                          String sort, boolean tradeAvailOnly) {
 
         QItem qItem = QItem.item;
         BooleanBuilder whereClause = new BooleanBuilder(); // BooleanBuilder: 조건을 동적으로 추가하거나 제거
+
+        //유저 검색
+        if (userId != null) {
+            whereClause.and(qItem.seller.id.eq(userId));
+        }
 
         // 물품 검색
         if (StringUtils.hasText(search)) {
@@ -48,4 +57,5 @@ public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredi
             default -> item.createAt.desc();
         };
     }
+
 }

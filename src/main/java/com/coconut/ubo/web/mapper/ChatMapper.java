@@ -1,21 +1,19 @@
 package com.coconut.ubo.web.mapper;
 
-import com.coconut.ubo.domain.chat.Chat;
 import com.coconut.ubo.domain.chat.ChatRoom;
 import com.coconut.ubo.domain.item.Item;
 import com.coconut.ubo.domain.user.User;
 import com.coconut.ubo.repository.chat.ChatRoomRepository;
 import com.coconut.ubo.repository.item.ItemRepository;
 import com.coconut.ubo.repository.user.UserRepository;
-import com.coconut.ubo.web.dto.chat.ChatRequest;
-import com.coconut.ubo.web.dto.chat.ChatResponse;
-import com.coconut.ubo.web.dto.redis.ChatDto;
-import com.coconut.ubo.web.dto.redis.ChatRoomDto;
+import com.coconut.ubo.web.dto.chat.ChatMessageRequest;
+import com.coconut.ubo.web.dto.chat.ChatRoomRequest;
+import com.coconut.ubo.web.dto.chat.ChatRoomResponse;
+import com.coconut.ubo.web.dto.redis.ChatMessageDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Component
 @AllArgsConstructor
@@ -25,68 +23,43 @@ public class ChatMapper {
     private final ChatRoomRepository chatRoomRepository;
     private final ItemRepository itemRepository;
 
-    public Chat toEntity(ChatDto chatDto) {
 
-        User sender = userRepository.findById(chatDto.getSender()).orElseThrow(IllegalArgumentException::new);
-        ChatRoom chatRoom = chatRoomRepository.findByRoomId(chatDto.getRoomId());
+    /**
+     * ChatMessageDto 엔티티 매핑 메서드
+     */
+    public static ChatMessageDto toChatMessageDto(ChatMessageRequest messageRequest, User loginUser) {
 
-        return Chat.builder()
-                .roomId(chatRoom)
-                .sender(sender)
-                .message(chatDto.getMessage())
-                .createdAt(LocalDateTime.parse(chatDto.getCreatedAt())) // String을 LocalDateTime으로 변환
+        return ChatMessageDto.builder()
+                .roomId(String.valueOf(messageRequest.getRoomId()))
+                .sender(loginUser.getId())
+                .message(messageRequest.getMessage())
+                .createdAt(String.valueOf(LocalDateTime.now()))
                 .build();
     }
 
-    public static ChatDto toChatDto(Chat chat) {
+    /**
+     * ChatRoom 엔티티 생성 메서드
+     */
+    public ChatRoom toChatRoomEntity(ChatRoomRequest chatRequest, User loginUser) {
 
-        return ChatDto.builder()
-                .roomId(chat.getRoomId().getRoomId())
-                .sender(chat.getSender().getId())
-                .message(chat.getMessage())
-                .build();
-    }
-
-    public ChatRoom toEntity(ChatRoomDto  chatRoomDto) {
-
-        Item item = itemRepository.findById(chatRoomDto.getItemId()).orElseThrow(IllegalArgumentException::new);
-        User seller  = userRepository.findById(chatRoomDto.getSeller()).orElseThrow(IllegalArgumentException::new);
-        User buyer  = userRepository.findById(chatRoomDto.getBuyer()).orElseThrow(IllegalArgumentException::new);
+        Item item = itemRepository.findById(chatRequest.getItemId()).orElseThrow(IllegalArgumentException::new);
+        User seller  = userRepository.findById(item.getSeller().getId()).orElseThrow(IllegalArgumentException::new);
 
         return ChatRoom.builder()
-                .roomId(chatRoomDto.getRoomId())
                 .item(item)
                 .seller(seller)
-                .buyer(buyer)
-                .build();
-    }
-
-    public ChatRoomDto toChatRoomDto(ChatRequest chatRequest, User user) {
-
-        return ChatRoomDto.builder()
-                .roomId(UUID.randomUUID().toString())
-                .itemId(chatRequest.getItemId())
-                .buyer(user.getId()) //todo 세션 가지고 쓸 수 있는지 확인!!
-                .seller(chatRequest.getSeller())
-                .build();
-    }
-
-    public ChatRoomDto toChatRoomDto(ChatRoom chatRoom) {
-
-        return ChatRoomDto.builder()
-                .roomId(UUID.randomUUID().toString())
-                .itemId(chatRoom.getItem().getId())
-                .buyer(chatRoom.getBuyer().getId())
-                .seller(chatRoom.getSeller().getId())
+                .buyer(loginUser)
                 .build();
     }
 
 
-    public ChatResponse toResponseDto(ChatRoom chatRoom) {
+    /**
+     * 채팅방 응답 데이터 생성
+     */
+    public ChatRoomResponse toResponseDto(ChatRoom chatRoom) {
 
-        return ChatResponse.builder()
+        return ChatRoomResponse.builder()
                 .id(chatRoom.getId())
-                .roomId(chatRoom.getRoomId())
                 .itemId(chatRoom.getItem().getId())
                 .buyer(chatRoom.getBuyer().getId())
                 .seller(chatRoom.getSeller().getId())
