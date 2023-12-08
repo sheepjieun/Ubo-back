@@ -41,9 +41,6 @@ public class ChatMessageController {
         ChatMessageDto chatMessageDto = ChatMapper.toChatMessageDto(messageRequest, loginUser);
         log.info("chatMessageDto 객체 생성 완료");
         log.info("chatMessageDto RoomId : {}", chatMessageDto.getRoomId());
-        log.info("chatMessageDto Sender : {}", chatMessageDto.getSender());
-        log.info("chatMessageDto Message : {}", chatMessageDto.getMessage());
-        log.info("chatMessageDto CreateAt : {}", chatMessageDto.getCreatedAt());
 
         // 클라이언트의 채팅방(topic) 입장, 채팅하기 위해 리스너와 연동
         chatRoomService.enterChatRoom(chatMessageDto.getRoomId());
