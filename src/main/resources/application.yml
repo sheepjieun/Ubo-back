@@ -50,3 +50,6 @@ logging.level:
   org.springframework.web.socket: debug
   com.coconut.ubo.config: debug
   com.coconut.ubo.web.controller: debug
+
+server:
+  port: 8080
