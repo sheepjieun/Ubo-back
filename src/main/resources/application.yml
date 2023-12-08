@@ -1,16 +1,13 @@
-# .gitignore에 application.yml 추가되었는지 확인
-# git push 시 무조건 application.yml 빼고!!
-
 spring:
   thymeleaf:
     cache: false # 개발 중에는 캐시를 비활성화하는 것이 좋습니다.
     enabled: true
 
   datasource:
-    url: jdbc:mysql://52.79.241.151:3306/ubo?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-#    url: jdbc:mysql://localhost:3306/ubo?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: sheepjieun
-    password: Wldmsdl38!
+    url: ${DB_URL}
+    #    url: jdbc:mysql://localhost:3306/ubo?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   servlet:
@@ -44,6 +41,19 @@ spring:
     redis:
       host: localhost
       port: 6379
+
+cloud:
+  aws:
+    s3:
+      bucket: sheepawsbucket # 버킷명
+    region:
+      static: ap-northeast-2 # 버킷 리전
+      auto: false
+    stack:
+      auto: false
+    credentials:
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
 
 logging.level:
   org.hibernate.SQL: debug
