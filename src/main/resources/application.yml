@@ -7,10 +7,10 @@ spring:
     enabled: true
 
   datasource:
-#    url: jdbc:mysql://192.168.219.163:3306/ubo?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    url: jdbc:mysql://localhost:3306/ubo?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: 1004
+    url: jdbc:mysql://52.79.241.151:3306/ubo?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+#    url: jdbc:mysql://localhost:3306/ubo?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: sheepjieun
+    password: Wldmsdl38!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   servlet:
