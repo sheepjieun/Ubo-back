@@ -40,3 +40,4 @@ out/
 ### yml ###
 #application.yml
 application-aws.yml
+application-mysql.yml
