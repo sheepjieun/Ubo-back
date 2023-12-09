@@ -1,7 +1,8 @@
 # application.yml
 spring:
   profiles:
-    active: local
+#    active: local
+    active: prod
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
