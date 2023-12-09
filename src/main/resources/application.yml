@@ -22,12 +22,6 @@ spring:
         format_sql: true
         default_batch_fetch_size: 1000
 
-  devtools:
-    livereload:
-      enabled: true
-    restart:
-      enabled: false
-
   freemarker:
     cache: false
 
@@ -48,13 +42,3 @@ server:
   port: 8080
 
 
----
-spring:
-  profiles:
-    active: prod # 운영 환경
-
----
-
-spring:
-  profiles:
-    active: local # 로컬 환경
