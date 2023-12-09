@@ -30,7 +30,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(3600); // 1 hour
     }
 
-/*
     // Argument Resolver 추가
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
@@ -48,10 +47,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginCheckInterceptor())
                 .order(2)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/signup", "/login", "/logout","/used", "/rental",
+                .excludePathPatterns("/signup", "/login", "/logout",
                         "/css/**", "/*.ico", "/error" );
         WebMvcConfigurer.super.addInterceptors(registry);
     }
-*/
 
 }
