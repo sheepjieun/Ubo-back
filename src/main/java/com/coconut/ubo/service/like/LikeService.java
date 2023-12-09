@@ -24,12 +24,6 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final LikeMapper likeMapper;
 
-    // likes 테이블에 레코드 추가 메서드
-    @Transactional
-    public void addLike(Long itemId, Long userId) {
-        Like like = likeMapper.toEntity(itemId, userId);
-        likeRepository.save(like);
-    }
 
 
     /**
@@ -57,4 +51,18 @@ public class LikeService {
         return itemStream.collect(Collectors.toList());
     }
 
+
+    // likes 테이블에 레코드 추가 메서드
+    @Transactional
+    public void addLike(Long itemId, Long userId) {
+        Like like = likeMapper.toEntity(itemId, userId);
+        likeRepository.save(like);
+    }
+
+    @Transactional
+    public void removeLike(Long itemId, Long userId) {
+        likeRepository.deleteByItemIdAndUserId(itemId, userId);
+        log.info("Like 삭제 완료");
+        return;
+    }
 }

@@ -22,6 +22,8 @@ public class UsedItemResponse {
     private String description;
     private String major;
 
+    private boolean isLiked; // 사용자가 좋아요 했는지 여부
+
     private int likeCount; // 관심수
     private int viewCount; // 조회수
     private String timeAgo; // 시간(n시간 전)

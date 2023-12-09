@@ -55,10 +55,14 @@ public abstract class Item {
         this.likeCount++;
     }
 
+    //관심수 감소
+    public void decrementLikeCount() {
+        this.likeCount--;
+    }
+
     //조회수 증가
     public void incrementViewCount() {
         this.viewCount++;
     }
-
 
 }

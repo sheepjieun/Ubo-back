@@ -61,7 +61,7 @@ public class ItemServiceImpl implements ItemService{
 
         List<String> imageUrls = uploadAndSaveItemImages(request, imageSet); // 이미지 S3 업로드 및 ImageDetail 엔티티 생성
 
-        return usedItemMapper.toDto(usedItem, imageUrls);
+        return usedItemMapper.toDto(usedItem, imageUrls, false);
 
     }
 
@@ -83,7 +83,7 @@ public class ItemServiceImpl implements ItemService{
         log.info("대여물품 등록 시 startDate : {}", rentalItem.getStartDate());
         log.info("대여물품 등록 시 endDate : {}", rentalItem.getEndDate());
 
-        return rentalItemMapper.toDto(rentalItem, imageUrls);
+        return rentalItemMapper.toDto(rentalItem, imageUrls, false);
 
     }
 
@@ -107,7 +107,8 @@ public class ItemServiceImpl implements ItemService{
         List<String> imageUrls = uploadAndSaveItemImages(request, imageSet); // 새 ImageDetail 엔티티 생성하고 S3에 업로드
         usedItem.updateUsedItem(request); // Useditem 업데이트
 
-        return usedItemMapper.toDto(usedItem, imageUrls);
+
+        return usedItemMapper.toDto(usedItem, imageUrls, false);
     }
 
     /**
@@ -128,7 +129,7 @@ public class ItemServiceImpl implements ItemService{
         rentalItem.updateRentalItem(request);
 
 //        return rentalItem.toRentalItemResponse(imageUrls);
-        return rentalItemMapper.toDto(rentalItem, imageUrls);
+        return rentalItemMapper.toDto(rentalItem, imageUrls, false);
 
     }
 
@@ -230,4 +231,17 @@ public class ItemServiceImpl implements ItemService{
         itemRepository.save(item);
     }
 
+
+    // 상품의 like_count 감소 메서드
+    public void decrementLikeCount(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
+        item.decrementLikeCount();
+        itemRepository.save(item);
+    }
+
+    // 아이템의 현재 좋아요 수 조회 메서드
+    public int getLikeCount(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
+        return item.getLikeCount(); // 좋아요 수 반환
+    }
 }

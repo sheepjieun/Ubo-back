@@ -7,6 +7,7 @@ import com.coconut.ubo.domain.item.RentalItem;
 import com.coconut.ubo.domain.user.User;
 import com.coconut.ubo.repository.image.ImageSetRepository;
 import com.coconut.ubo.repository.item.ItemRepository;
+import com.coconut.ubo.repository.user.LikeRepository;
 import com.coconut.ubo.repository.user.UserRepository;
 import com.coconut.ubo.service.item.ItemServiceImpl;
 import com.coconut.ubo.service.user.UserServiceImpl;
@@ -40,6 +41,8 @@ public class RentalController {
     private final ItemServiceImpl itemService;
     private final RentalItemMapper rentalItemMapper;
     private final UserServiceImpl userService;
+    private final LikeRepository likeRepository;
+
 
 
     /**
@@ -129,12 +132,15 @@ public class RentalController {
     /**
      * 물품 상세 페이지
      */
-    @GetMapping("/{id}")
+    @GetMapping("/{itemId}")
     @Transactional
     public ResponseEntity<?> getUsedItem(@Login User loginUser,
-                                                          @PathVariable("id") Long id) throws IOException {
+                                                          @PathVariable("itemId") Long itemId) throws IOException {
 
-        Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        // 세션 대신 하드코딩
+        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+
+        Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
 
         //조회수 증가
         item.incrementViewCount();
@@ -146,8 +152,11 @@ public class RentalController {
         //해당 엔티티의 ImageSet에 연관된 ImageDetail 목록에서 ImageURL 추출
         ImageSet imageSet = imageSetRepository.findByItem(rentalItem).orElseThrow(EntityNotFoundException::new);
         List<String> imageUrls = imageSet.getImageDetails().stream().map(ImageDetail::getFileUrl).collect(Collectors.toList());
-        RentalItemResponse rentalItemResponse = rentalItemMapper.toDto(rentalItem, imageUrls);
 
+        // 로그인한 사용자가 물품 좋아요 했는지 확인
+        boolean isLiked = likeRepository.findByItemIdAndUserId(itemId, user.getId()) != null;
+
+        RentalItemResponse rentalItemResponse = rentalItemMapper.toDto(rentalItem, imageUrls, isLiked);
         return ResponseEntity.ok(rentalItemResponse);
 
 /*

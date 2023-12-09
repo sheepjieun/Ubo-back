@@ -24,7 +24,6 @@ public class UsedItemMapper {
                 .seller(user)
                 .title(request.getTitle())
                 .price(request.getPrice())
-//                .price2(request.getPrice2())
                 .category(request.getCategory())
                 .description(request.getDescription())
                 .major(request.getMajor())
@@ -43,7 +42,7 @@ public class UsedItemMapper {
                 .itemStatus(ItemStatus.TRADE_AVAIL)
                 .build();
     }
-    public UsedItemResponse toDto(UsedItem usedItem, List<String> imageUrls) {
+    public UsedItemResponse toDto(UsedItem usedItem, List<String> imageUrls, Boolean isLiked) {
 
         String timeAgo = TimeAgo.timeAgo(usedItem.getCreateAt().atZone(ZoneId.systemDefault()).toInstant());
 
@@ -56,6 +55,8 @@ public class UsedItemMapper {
                 .category(usedItem.getCategory())
                 .description(usedItem.getDescription())
                 .major(usedItem.getMajor())
+
+                .isLiked(isLiked)
                 .likeCount(usedItem.getLikeCount())
                 .viewCount(usedItem.getViewCount())
                 .timeAgo(timeAgo)

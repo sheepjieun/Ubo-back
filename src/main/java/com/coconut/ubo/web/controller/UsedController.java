@@ -8,6 +8,7 @@ import com.coconut.ubo.domain.item.UsedItem;
 import com.coconut.ubo.domain.user.User;
 import com.coconut.ubo.repository.image.ImageSetRepository;
 import com.coconut.ubo.repository.item.ItemRepository;
+import com.coconut.ubo.repository.user.LikeRepository;
 import com.coconut.ubo.repository.user.UserRepository;
 import com.coconut.ubo.service.item.ItemServiceImpl;
 import com.coconut.ubo.web.argumentresolver.Login;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequestMapping("/used")
 public class UsedController {
+    private final LikeRepository likeRepository;
 
     private final ImageSetRepository imageSetRepository;
     private final ItemRepository itemRepository;
@@ -232,6 +234,10 @@ public class UsedController {
     @Transactional
     public ResponseEntity<?> getUsedItem(@Login User loginUser, @PathVariable("itemId") Long itemId) throws IOException {
 
+        // 세션 대신 하드코딩
+        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+
+
         Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
 
         //조회수 증가
@@ -244,10 +250,13 @@ public class UsedController {
         //해당 엔티티의 ImageSet에 연관된 ImageDetail 목록에서 ImageURL 추출
         ImageSet imageSet = imageSetRepository.findByItem(usedItem).orElseThrow(EntityNotFoundException::new);
         List<String> imageUrls = imageSet.getImageDetails().stream().map(ImageDetail::getFileUrl).collect(Collectors.toList());
-        UsedItemResponse usedItemResponse = usedItemMapper.toDto(usedItem, imageUrls);
 
+        // 로그인한 사용자가 물품 좋아요 했는지 확인
+        boolean isLiked = likeRepository.findByItemIdAndUserId(itemId, user.getId()) != null;
+
+        UsedItemResponse usedItemResponse = usedItemMapper.toDto(usedItem, imageUrls, isLiked);
         return ResponseEntity.ok(usedItemResponse);
-
+    }
 /*
         if (userService.isUserLoggedIn(loginUser)) {
             Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
@@ -266,7 +275,5 @@ public class UsedController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
         }
 */
-
-    }
 
 }

@@ -11,6 +11,7 @@ import com.coconut.ubo.service.like.LikeService;
 import com.coconut.ubo.service.item.ItemServiceImpl;
 import com.coconut.ubo.web.argumentresolver.Login;
 import com.coconut.ubo.web.dto.item.ItemListResponse;
+import com.coconut.ubo.web.dto.like.LikeResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,15 +35,28 @@ public class LikeController {
      * 좋아요 클릭 시 기능 처리
      */
     @PostMapping("/like/{itemId}")
-    public ResponseEntity<?> likeItem(@PathVariable Long itemId) {
+    public ResponseEntity<LikeResponse> likeItem(@PathVariable Long itemId) {
 
         //세션 대신 하드 코딩
         User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
 
-        itemService.incrementLikeCount(itemId); // 좋아요 수 증가
-        likeService.addLike(itemId, user.getId()); // like db 추가
+        LikeResponse response;
+        //LikeRepository에서 item, user 확인했는데 값 나옴
+        if (likeRepository.findByItemIdAndUserId(itemId, user.getId()) != null) {
+            //좋아요 취소
+            itemService.decrementLikeCount(itemId); // 좋아요 수 감소
+            likeService.removeLike(itemId, user.getId()); // like db 삭제
+            int likeCount = itemService.getLikeCount(itemId); // 좋아요 수 조회
+            response = new LikeResponse("관심 목록에서 삭제되었습니다.", likeCount);
 
-        return ResponseEntity.ok().body("관심 목록에 추가되었습니다.");
+        } else {
+            // 좋아요 추가
+            itemService.incrementLikeCount(itemId); // 좋아요 수 증가
+            likeService.addLike(itemId, user.getId()); // like db 추가
+            int likeCount = itemService.getLikeCount(itemId); // 좋아요 수 조회
+            response = new LikeResponse("관심 목록에 추가되었습니다.", likeCount);
+        }
+        return ResponseEntity.ok(response);
     }
 
     /**

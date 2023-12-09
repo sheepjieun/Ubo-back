@@ -27,7 +27,7 @@ public class EmbeddedRedisConfig {
         try {
             redisServer.start();
         } catch (Exception e) {
-            log.error("", e);
+            log.error("에러", e);
         }
     }
 

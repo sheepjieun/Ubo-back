@@ -34,24 +34,25 @@ public class RentalItemMapper {
                 .itemStatus(ItemStatus.RENT_AVAIL)
                 .build();
     }
-    public RentalItemResponse toDto(RentalItem rentalItem, List<String> imageUrls) {
+    public RentalItemResponse toDto(RentalItem rentalItem, List<String> imageUrls, Boolean isLiked) {
 
         String timeAgo = TimeAgo.timeAgo(rentalItem.getCreateAt().atZone(ZoneId.systemDefault()).toInstant()); // 상대적 시간 문자열 계산
-        return new RentalItemResponse(
-                rentalItem.getId(),
-                rentalItem.getSeller().getNickname(),
-                rentalItem.getItemStatus(),
-                rentalItem.getTitle(),
-                rentalItem.getDeposit(),
-                rentalItem.getPrice(),
-                rentalItem.getDescription(),
-                rentalItem.getMajor(),
-                rentalItem.getLikeCount(),
-                rentalItem.getViewCount(),
-                rentalItem.getStartDate(),
-                rentalItem.getEndDate(),
-                timeAgo,
-                imageUrls
-        );
+        return RentalItemResponse.builder()
+                .itemId(rentalItem.getId())
+                .userNickname(rentalItem.getSeller().getNickname())
+                .status(rentalItem.getItemStatus())
+                .title(rentalItem.getTitle())
+                .deposit(rentalItem.getDeposit())
+                .price(rentalItem.getPrice())
+                .description(rentalItem.getDescription())
+                .major(rentalItem.getMajor())
+                .isLiked(isLiked)
+                .likeCount(rentalItem.getLikeCount())
+                .viewCount(rentalItem.getViewCount())
+                .startDate(rentalItem.getStartDate())
+                .endDate(rentalItem.getEndDate())
+                .timeAgo(timeAgo)
+                .images(imageUrls)
+                .build();
     }
 }

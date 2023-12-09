@@ -18,4 +18,8 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     List<Item> findUsedItemsByUserId(@Param("userId") Long userId);
     @Query("SELECT l.item FROM Like l WHERE l.user.id = :userId AND TYPE(l.item) = RentalItem")
     List<Item> findRentalItemsByUserId(@Param("userId") Long userId);
+
+    Like findByItemIdAndUserId(Long itemId, Long userId);
+
+    void deleteByItemIdAndUserId(Long itemId, Long userId);
 }
