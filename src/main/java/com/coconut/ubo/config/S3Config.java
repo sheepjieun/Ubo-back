@@ -1,12 +1,13 @@
 package com.coconut.ubo.config;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+
 
 @Configuration
 public class S3Config {
@@ -20,12 +21,12 @@ public class S3Config {
     private String region;
 
     @Bean
-    public AmazonS3Client amazonS3Client() {
-        // BasicAWSCredentials : accessKey 와 secretKey 를 기반으로 인증 정보를 생성
-        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
-        return (AmazonS3Client) AmazonS3ClientBuilder.standard() // AmazonS3ClientBuilder.standard() : S3 클라이언트를 구성하기 위한 빌더 객체를 생성
-                .withRegion(region) // 클라이언트가 작업할 AWS 지역을 설정
-                .withCredentials(new AWSStaticCredentialsProvider(awsCredentials)) // withCredentials() : 액세스 키 및 비밀 키를 제공하는 AWSStaticCredentialsProvider 설정
-                .build(); // 이 메서드를 호출하여 최종적으로 AmazonS3Client 인스턴스를 생성하고 반환
+    public S3Client s3Client() {
+        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(accessKey, secretKey);
+
+        return S3Client.builder()
+                .region(Region.of(region))
+                .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
+                .build();
     }
 }

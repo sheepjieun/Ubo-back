@@ -1,15 +1,9 @@
 # 운영 환경
 spring:
-  config:
-    activate:
-      on-profile: prod
-    import: 'aws-parameterstore:'
-
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${/ubo/mysql/url}
-    username: ${/ubo/mysql/username}
-    password: ${/ubo/mysql/password}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
 cloud:
   aws:
@@ -17,10 +11,6 @@ cloud:
       bucket: sheepawsbucket
     region:
       static: ap-northeast-2
-    stack:
-      auto: false
-      paramstore:
-        enabled: true
     credentials:
-      access-key: ${/ubo/aws/access-key}
-      secret-key: ${/ubo/aws/secret-key}
+      access-key: ${AWS_ACCESS_KEY_ID}
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
