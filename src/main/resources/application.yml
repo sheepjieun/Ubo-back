@@ -36,5 +36,9 @@ logging.level:
 
 server:
   port: 8080
+  tomcat:
+    max-http-response-header-size: 64KB
+#  http:
+#    max-header-size: 64KB
 
 
