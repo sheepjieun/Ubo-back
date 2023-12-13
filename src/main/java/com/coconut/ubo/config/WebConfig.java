@@ -23,7 +23,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
 
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000") // TODO 학교에서는 사용 중인 IP 주소 변경하기
+//                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("https://ourboddari.com")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*") // 모든 헤더 허용
                 .allowCredentials(true)
