@@ -60,7 +60,7 @@ public class HomeController {
     public ResponseEntity<?> loadHomeUsed(@Login User loginUser) {
 
         if (userService.isUserLoggedIn(loginUser)) {
-            List<Item> usedItems = itemService.getFilteredItems(null, "used", "new", true);
+            List<Item> usedItems = itemService.getFilteredItems(null, "used", "new", null, true);
             List<ItemListResponse> usedItemsResponse = itemService.getItemListResponses(usedItems, null);
             return ResponseEntity.ok(usedItemsResponse);
         }else {
@@ -75,7 +75,7 @@ public class HomeController {
     public ResponseEntity<?> loadHomeRental(@Login User loginUser) {
 
         if (userService.isUserLoggedIn(loginUser)) {
-            List<Item> rentalItems = itemService.getFilteredItems(null, "rental", "new", true);
+            List<Item> rentalItems = itemService.getFilteredItems(null, "rental", "new", null, true);
             List<ItemListResponse> rentalItemsResponses = itemService.getItemListResponses(rentalItems, null);
             return ResponseEntity.ok(rentalItemsResponses);
         }else {
@@ -92,10 +92,11 @@ public class HomeController {
             @Login User loginUser,
             @RequestParam String q,
             @RequestParam(defaultValue = "new") String sort,
+            @RequestParam(required = false) String major,
             @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
 
         if (userService.isUserLoggedIn(loginUser)) {
-            List<Item> items = itemService.getFilteredItems(q, "used", sort, tradeAvailOnly);
+            List<Item> items = itemService.getFilteredItems(q, "used", sort, major, tradeAvailOnly);
             return ResponseEntity.ok(itemService.getItemListResponses(items, null));
         }else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
@@ -112,10 +113,11 @@ public class HomeController {
             @Login User loginUser,
             @RequestParam String q,
             @RequestParam(defaultValue = "new") String sort,
+            @RequestParam(required = false) String major,
             @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
 
         if (userService.isUserLoggedIn(loginUser)) {
-            List<Item> items = itemService.getFilteredItems(q, "rental", sort, tradeAvailOnly);
+            List<Item> items = itemService.getFilteredItems(q, "rental", sort, major, tradeAvailOnly);
             return ResponseEntity.ok(itemService.getItemListResponses(items, null));
         }else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");

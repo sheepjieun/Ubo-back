@@ -3,7 +3,6 @@ package com.coconut.ubo.repository.item;
 import com.coconut.ubo.domain.item.*;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.util.StringUtils;
@@ -16,7 +15,9 @@ public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredi
     default List<Item> findAllWithFilters(Long userId,
                                           String search,
                                           Class<? extends Item> trade,
-                                          String sort, boolean tradeAvailOnly) {
+                                          String sort,
+                                          String major,
+                                          boolean tradeAvailOnly) {
 
         QItem qItem = QItem.item;
         BooleanBuilder whereClause = new BooleanBuilder(); // BooleanBuilder: 조건을 동적으로 추가하거나 제거
@@ -37,6 +38,12 @@ public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredi
         } else if (trade.equals(RentalItem.class)) {
             whereClause.and(qItem.instanceOf(RentalItem.class));
         }
+
+        // 학과명 필터링
+        if (StringUtils.hasText(major)) {
+            whereClause.and(qItem.major.containsIgnoreCase(major)); // 학과명 필터링 조건 추가
+        }
+
 
         // 거래 가능만 보기
         if (tradeAvailOnly) {

@@ -5,10 +5,10 @@ import com.coconut.ubo.repository.user.UserRepository;
 import com.coconut.ubo.service.chat.ChatMessageService;
 import com.coconut.ubo.service.chat.ChatRoomService;
 import com.coconut.ubo.service.redis.RedisPublisher;
+import com.coconut.ubo.web.argumentresolver.Login;
 import com.coconut.ubo.web.dto.chat.ChatMessageRequest;
 import com.coconut.ubo.web.dto.redis.ChatMessageDto;
 import com.coconut.ubo.web.mapper.ChatMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,11 +30,8 @@ public class ChatMessageController {
      * 채팅 & 채팅 저장
      */
     @MessageMapping("/message")
-    public void chat(ChatMessageRequest messageRequest) {
+    public void chat(@Login User loginUser, ChatMessageRequest messageRequest) {
 
-//        User user = (User) httpServletRequest.getSession().getAttribute(LOGIN_USER);
-        //세션 대신 하드 코딩
-        User loginUser = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
         log.info("채팅 컨트롤러 실행 loginUser: {} ", loginUser.getLoginId());
 
         // ChatMessageDto 객체 생성

@@ -16,8 +16,8 @@ public interface ItemService {
     RentalItemResponse saveRentalItem(User user, RentalItemRequest request) throws IOException;
     UsedItemResponse updateUsedItem(Long id, UsedItemRequest request) throws IOException;
     RentalItemResponse updateRentalItem(Long id, RentalItemRequest request) throws IOException;
-    List<Item> getFilteredItems(String search, String trade, String sort, boolean tradeAvailOnly);
+    List<Item> getFilteredItems(String search, String trade, String sort, String major, boolean tradeAvailOnly);
 
-    List<Item> getMyFilteredItems(Long id, String trade, String sort, boolean tradeAvailOnly);
+    List<Item> getMyFilteredItems(Long id, String trade, String sort, String major, boolean tradeAvailOnly);
 
 }

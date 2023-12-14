@@ -1,13 +1,13 @@
 package com.coconut.ubo.web.controller;
 
-import com.coconut.ubo.common.SessionConst;
 import com.coconut.ubo.domain.user.User;
-import com.coconut.ubo.repository.user.UserRepository;
 import com.coconut.ubo.service.user.UserServiceImpl;
 import com.coconut.ubo.web.argumentresolver.Login;
-import com.coconut.ubo.web.dto.user.*;
+import com.coconut.ubo.web.dto.user.LoginUserRequest;
+import com.coconut.ubo.web.dto.user.SignUpUserRequest;
+import com.coconut.ubo.web.dto.user.UpdateUserPasswordRequest;
+import com.coconut.ubo.web.dto.user.UpdateUserRequest;
 import com.coconut.ubo.web.mapper.UserMapper;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -27,7 +27,6 @@ import static com.coconut.ubo.common.SessionConst.LOGIN_USER;
 public class UserController {
 
     private final UserServiceImpl userService;
-    private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     /**
@@ -70,15 +69,35 @@ public class UserController {
     @GetMapping("/user/account")
     public ResponseEntity<?> getUserAccount(@Login User loginUser) {
 
-        // 세션 대신 하드코딩
-        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
-        return ResponseEntity.status(HttpStatus.OK).body(userMapper.toDto(user));
+        return ResponseEntity.status(HttpStatus.OK).body(userMapper.toDto(loginUser));
     }
 
 
     /**
      * 회원 정보 수정
      */
+
+    @PutMapping("/user/account")
+    public ResponseEntity<String> updateUser(@Login User loginUser,
+                                             @RequestBody @Valid UpdateUserRequest request) throws IOException {
+        userService.update(loginUser, request);
+        return ResponseEntity.status(HttpStatus.OK).body("회원 수정이 완료되었습니다.");
+    }
+
+
+    /**
+     * 회원 비밀번호 변경
+     */
+
+    @PutMapping("/user/password")
+    public ResponseEntity<String> updatePassword(@Login User loginUser,
+                                                 @RequestBody @Valid UpdateUserPasswordRequest request) {
+        userService.updatePassword(loginUser, request);
+        return ResponseEntity.status(HttpStatus.OK).body("비밀번호 변경이 완료되었습니다.");
+    }
+
+}
+
 /*
     @PutMapping("/users/{id}")
     public ResponseEntity<?> updateUser(@PathVariable("id") Long id,
@@ -94,21 +113,6 @@ public class UserController {
     }
 */
 
-    @PutMapping("/user/account")
-    public ResponseEntity<String> updateUser(@Login User loginUser,
-                                             @RequestBody @Valid UpdateUserRequest request) throws IOException {
-
-        // 세션 대신 하드코딩
-        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
-
-        userService.update(user, request);
-        return ResponseEntity.status(HttpStatus.OK).body("회원 수정이 완료되었습니다.");
-    }
-
-
-    /**
-     * 회원 비밀번호 변경
-     */
 /*
     @PutMapping("/users/{id}/password")
     public ResponseEntity<String> updatePassword(@PathVariable("id") Long id,
@@ -123,15 +127,3 @@ public class UserController {
         }
     }
 */
-
-    @PutMapping("/user/password")
-    public ResponseEntity<String> updatePassword(@Login User loginUser,
-                                                 @RequestBody @Valid UpdateUserPasswordRequest request) {
-        // 세션 대신 하드코딩
-        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
-
-        userService.updatePassword(user, request);
-        return ResponseEntity.status(HttpStatus.OK).body("비밀번호 변경이 완료되었습니다.");
-    }
-
-}

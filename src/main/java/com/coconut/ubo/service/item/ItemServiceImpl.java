@@ -1,20 +1,22 @@
 package com.coconut.ubo.service.item;
 
-import com.coconut.ubo.domain.user.User;
 import com.coconut.ubo.domain.image.ImageDetail;
 import com.coconut.ubo.domain.image.ImageSet;
-import com.coconut.ubo.domain.item.*;
+import com.coconut.ubo.domain.item.Category;
+import com.coconut.ubo.domain.item.Item;
+import com.coconut.ubo.domain.item.RentalItem;
+import com.coconut.ubo.domain.item.UsedItem;
+import com.coconut.ubo.domain.user.User;
 import com.coconut.ubo.repository.image.ImageDetailRepository;
 import com.coconut.ubo.repository.image.ImageSetRepository;
 import com.coconut.ubo.repository.item.ItemRepository;
-import com.coconut.ubo.repository.item.ItemRepositoryCustom;
 import com.coconut.ubo.repository.user.LikeRepository;
 import com.coconut.ubo.repository.user.UserRepository;
 import com.coconut.ubo.service.S3Uploader;
+import com.coconut.ubo.web.dto.item.*;
 import com.coconut.ubo.web.mapper.ItemListResponseMapper;
 import com.coconut.ubo.web.mapper.RentalItemMapper;
 import com.coconut.ubo.web.mapper.UsedItemMapper;
-import com.coconut.ubo.web.dto.item.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -133,15 +135,20 @@ public class ItemServiceImpl implements ItemService{
 
     }
 
+
     /**
      * 물품 조회 - 물품 검색, 거래 타입, 물품 정렬, 거래 가능만
      */
-    public List<Item> getFilteredItems(String search, String trade, String sort, boolean tradeAvailOnly) {
+    public List<Item> getFilteredItems(String search,
+                                       String trade,
+                                       String sort,
+                                       String major,
+                                       boolean tradeAvailOnly) {
 
         if ("used".equalsIgnoreCase(trade)) {
-            return itemRepository.findAllWithFilters(null, search, UsedItem.class, sort, tradeAvailOnly);
+            return itemRepository.findAllWithFilters(null, search, UsedItem.class, sort, major, tradeAvailOnly);
         } else if ("rental".equalsIgnoreCase(trade)) {
-            return itemRepository.findAllWithFilters(null, search, RentalItem.class, sort, tradeAvailOnly);
+            return itemRepository.findAllWithFilters(null, search, RentalItem.class, sort,  major, tradeAvailOnly);
         } else {
             throw new IllegalArgumentException("물품 거래 타입이 잘못 표시되었습니다.");
         }
@@ -151,12 +158,12 @@ public class ItemServiceImpl implements ItemService{
      *
      * 마이페이지 - 판매 목록 조회 - 유저 아이디, 거래 타입, 물품 정렬, 거래 가능만
      */
-    public List<Item> getMyFilteredItems(Long userId, String trade, String sort, boolean tradeAvailOnly) {
+    public List<Item> getMyFilteredItems(Long userId, String trade, String sort, String major, boolean tradeAvailOnly) {
 
         if ("used".equalsIgnoreCase(trade)) {
-            return itemRepository.findAllWithFilters(userId, null, UsedItem.class, sort, tradeAvailOnly);
+            return itemRepository.findAllWithFilters(userId, null, UsedItem.class, sort, major, tradeAvailOnly);
         } else if ("rental".equalsIgnoreCase(trade)) {
-            return itemRepository.findAllWithFilters(userId, null, RentalItem.class, sort, tradeAvailOnly);
+            return itemRepository.findAllWithFilters(userId, null, RentalItem.class, sort, major, tradeAvailOnly);
         } else {
             throw new IllegalArgumentException("물품 거래 타입이 잘못 표시되었습니다.");
         }
