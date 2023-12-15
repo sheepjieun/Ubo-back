@@ -251,4 +251,23 @@ public class ItemServiceImpl implements ItemService{
         Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
         return item.getLikeCount(); // 좋아요 수 반환
     }
+
+    /**
+     * 물품 삭제 메서드
+     */
+    public void deleteItem(Long itemId, Long userId) {
+        Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
+
+        // 물품 소유자 확인
+        if (!item.getSeller().getId().equals(userId)) {
+            throw new IllegalStateException("물품 삭제 권한이 없습니다.");
+        }
+
+        // 연관된 이미지 세트 조회 및 삭제
+        ImageSet imageSet = imageSetRepository.findByItem(item).orElseThrow(EntityNotFoundException::new);
+        deleteImageDetail(imageSet);
+
+        // 물품 삭제
+        itemRepository.delete(item);
+    }
 }

@@ -4,6 +4,7 @@ import com.coconut.ubo.web.argumentresolver.LoginUserArgumentResolver;
 import com.coconut.ubo.web.interceptor.LogInterceptor;
 import com.coconut.ubo.web.interceptor.LoginCheckInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -24,19 +25,19 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
 //                .allowedOrigins("http://localhost:3000")
                 .allowedOrigins("https://ourboddari.com") //TODO 배포 시 변경
-                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*") // 모든 헤더 허용
                 .allowCredentials(true)
                 .maxAge(3600); // 1 hour
     }
 
-    // Argument Resolver 추가
+
+    // TODO 로컬로 변경 시 인터셉터 주석처리
     @Override
-    public void addArgumentResolvers(List<org.springframework.web.method.support.HandlerMethodArgumentResolver> resolvers) {
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new LoginUserArgumentResolver());
     }
 
-    // Interceptor 추가
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LogInterceptor()) // 인터셉터 등록
@@ -48,9 +49,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .order(2)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/signup", "/login", "/logout",
-                        "/css/**", "/*.ico", "/error" );
+                        "/css/**", "/*.ico", "/error");
         WebMvcConfigurer.super.addInterceptors(registry);
     }
-
-
 }
+
+

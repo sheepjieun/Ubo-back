@@ -169,6 +169,16 @@ public class UsedController {
     }
 
 
+    /**
+     * 물품 삭제
+     */
+    @DeleteMapping("/{itemId}")
+    @Transactional
+    public ResponseEntity<?> deleteUsedItem(@Login User loginUser, @PathVariable("itemId") Long itemId) throws IOException {
+
+        itemService.deleteItem(itemId, loginUser.getId());
+        return ResponseEntity.ok().build();
+    }
 
 
 

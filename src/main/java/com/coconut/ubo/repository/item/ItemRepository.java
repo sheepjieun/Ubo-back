@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.util.StringUtils;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredicateExecutor<Item>, ItemRepositoryCustom {
@@ -53,7 +55,21 @@ public interface ItemRepository extends JpaRepository<Item, Long>, QuerydslPredi
         // 물품 정렬(최신순, 가격 낮은 순, 가격 높은 순)
         OrderSpecifier<?> orderBy = determineSortType(sort, qItem);
 
-        return (List<Item>) findAll(whereClause, orderBy);
+//        return (List<Item>) findAll(whereClause, orderBy);
+        List<Item> items = (List<Item>) findAll(whereClause, orderBy);
+
+        // 가격 기준 정렬 필요 시 애플리케이션 레벨에서 추가 정렬
+        if ("min_price".equals(sort) || "max_price".equals(sort)) {
+            Comparator<Item> priceComparator = Comparator.comparingInt(
+                    item -> Integer.parseInt(item.getPrice().replace(",", "").replace(" ", ""))
+            );
+            if ("max_price".equals(sort)) {
+                priceComparator = priceComparator.reversed();
+            }
+            items = items.stream().sorted(priceComparator).collect(Collectors.toList());
+        }
+
+        return items;
     }
 
     private OrderSpecifier<?> determineSortType(String sort, QItem item) {
