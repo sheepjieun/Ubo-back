@@ -86,6 +86,8 @@ public class UserController {
     @GetMapping("/user/account")
     public ResponseEntity<?> getUserAccount(@Login User loginUser) {
 
+        log.info("마이페이지 user 닉네임 정보 : {}", loginUser.getNickname());
+        log.info("마이페이지 user 학교 정보 : {}", loginUser.getCollege());
         return ResponseEntity.status(HttpStatus.OK).body(userMapper.toDto(loginUser));
     }
 
