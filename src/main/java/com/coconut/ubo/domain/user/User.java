@@ -23,7 +23,7 @@ public class User {
     private String image;
     private String nickname;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "college_id")
     private College college;
 

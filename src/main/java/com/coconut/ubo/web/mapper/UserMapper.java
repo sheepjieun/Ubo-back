@@ -7,7 +7,7 @@ import com.coconut.ubo.service.S3Uploader;
 import com.coconut.ubo.web.dto.user.SignUpUserRequest;
 import com.coconut.ubo.web.dto.user.UserResponse;
 import lombok.AllArgsConstructor;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,6 +34,8 @@ public class UserMapper {
      * 마이페이지 내정보 조회
      */
     public UserResponse toDto(User user) {
+        // College 엔티티 초기화
+        Hibernate.initialize(user.getCollege());
 
         String fullImageUrl = s3Uploader.convertToFullUrl(user.getImage());
 

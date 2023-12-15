@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -83,11 +84,13 @@ public class UserController {
     /**
      * 마이페이지 내 정보 조회
      */
+    @Transactional
     @GetMapping("/user/account")
     public ResponseEntity<?> getUserAccount(@Login User loginUser) {
 
         log.info("마이페이지 user 닉네임 정보 : {}", loginUser.getNickname());
-        log.info("마이페이지 user 학교 정보 : {}", loginUser.getCollege());
+        log.info("마이페이지 user 학교 정보 : {}", loginUser.getCollege().getName());
+
         return ResponseEntity.status(HttpStatus.OK).body(userMapper.toDto(loginUser));
     }
 
