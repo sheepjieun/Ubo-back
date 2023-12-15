@@ -1,8 +1,9 @@
 package com.coconut.ubo.web.mapper;
 
-import com.coconut.ubo.domain.user.User;
 import com.coconut.ubo.domain.item.ItemStatus;
 import com.coconut.ubo.domain.item.RentalItem;
+import com.coconut.ubo.domain.user.User;
+import com.coconut.ubo.service.S3Uploader;
 import com.coconut.ubo.web.dto.TimeAgo;
 import com.coconut.ubo.web.dto.item.RentalItemRequest;
 import com.coconut.ubo.web.dto.item.RentalItemResponse;
@@ -16,6 +17,8 @@ import java.util.List;
 @Component
 @AllArgsConstructor
 public class RentalItemMapper {
+
+    private final S3Uploader s3Uploader;
 
     public RentalItem toEntity(RentalItemRequest request, User user) {
         return RentalItem.builder()
@@ -36,6 +39,7 @@ public class RentalItemMapper {
     }
     public RentalItemResponse toDto(RentalItem rentalItem, List<String> imageUrls, Boolean isLiked) {
 
+        List<String> fullImageUrls = s3Uploader.convertToFullUrls(imageUrls);
         String timeAgo = TimeAgo.timeAgo(rentalItem.getCreateAt().atZone(ZoneId.systemDefault()).toInstant()); // 상대적 시간 문자열 계산
         return RentalItemResponse.builder()
                 .itemId(rentalItem.getId())
@@ -52,7 +56,7 @@ public class RentalItemMapper {
                 .startDate(rentalItem.getStartDate())
                 .endDate(rentalItem.getEndDate())
                 .timeAgo(timeAgo)
-                .images(imageUrls)
+                .images(fullImageUrls)
                 .build();
     }
 }

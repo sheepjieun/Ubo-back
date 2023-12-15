@@ -2,6 +2,7 @@ package com.coconut.ubo.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +20,9 @@ public class S3Config {
     @Value("${cloud.aws.region.static}")
     private String region;
 
+
     @Bean
-    public AmazonS3Client amazonS3Client() {
+    public AmazonS3 amazonS3Client() {
         // BasicAWSCredentials : accessKey 와 secretKey 를 기반으로 인증 정보를 생성
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
         return (AmazonS3Client) AmazonS3ClientBuilder.standard() // AmazonS3ClientBuilder.standard() : S3 클라이언트를 구성하기 위한 빌더 객체를 생성

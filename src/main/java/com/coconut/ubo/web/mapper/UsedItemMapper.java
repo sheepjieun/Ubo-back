@@ -1,8 +1,9 @@
 package com.coconut.ubo.web.mapper;
 
-import com.coconut.ubo.domain.user.User;
 import com.coconut.ubo.domain.item.ItemStatus;
 import com.coconut.ubo.domain.item.UsedItem;
+import com.coconut.ubo.domain.user.User;
+import com.coconut.ubo.service.S3Uploader;
 import com.coconut.ubo.web.dto.TimeAgo;
 import com.coconut.ubo.web.dto.item.UsedItemRequest;
 import com.coconut.ubo.web.dto.item.UsedItemResponse;
@@ -18,6 +19,8 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class UsedItemMapper {
+
+    private final S3Uploader s3Uploader;
 
     public UsedItem toEntity(UsedItemRequest request, User user) {
         return UsedItem.builder()
@@ -44,6 +47,7 @@ public class UsedItemMapper {
     }
     public UsedItemResponse toDto(UsedItem usedItem, List<String> imageUrls, Boolean isLiked) {
 
+        List<String> fullImageUrls = s3Uploader.convertToFullUrls(imageUrls);
         String timeAgo = TimeAgo.timeAgo(usedItem.getCreateAt().atZone(ZoneId.systemDefault()).toInstant());
 
         return UsedItemResponse.builder()
@@ -68,7 +72,7 @@ public class UsedItemMapper {
                 .pageDiscoloration(usedItem.getPageDiscoloration())
                 .pageDamage(usedItem.getPageDamage())
 
-                .images(imageUrls)
+                .images(fullImageUrls)
                 .build();
     }
 }

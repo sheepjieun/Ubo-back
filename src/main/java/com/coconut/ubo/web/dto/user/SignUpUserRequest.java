@@ -1,7 +1,7 @@
 package com.coconut.ubo.web.dto.user;
 
-import jakarta.validation.constraints.NotEmpty;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 
@@ -13,4 +13,5 @@ public class SignUpUserRequest {
     private String password;
     private String nickname;
     private String college;
+    private MultipartFile image;
 }

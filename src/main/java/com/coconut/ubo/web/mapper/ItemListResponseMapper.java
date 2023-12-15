@@ -5,6 +5,7 @@ import com.coconut.ubo.domain.item.Category;
 import com.coconut.ubo.domain.item.Item;
 import com.coconut.ubo.domain.item.UsedItem;
 import com.coconut.ubo.repository.image.ImageSetRepository;
+import com.coconut.ubo.service.S3Uploader;
 import com.coconut.ubo.web.dto.TimeAgo;
 import com.coconut.ubo.web.dto.item.ItemListResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,8 +19,10 @@ import java.time.ZoneId;
 public class ItemListResponseMapper {
 
     private final ImageSetRepository imageSetRepository;
+    private final S3Uploader s3Uploader;
 
     public ItemListResponse toDto(Item item, Category category) {
+        String fullImageUrl;
 
         // Category가 제공되지 않았거나, UsedItem의 Category가 일치하는 경우에만 처리
         if (category == null || (item instanceof UsedItem && ((UsedItem)item).getCategory().equals(category))) {
@@ -27,9 +30,10 @@ public class ItemListResponseMapper {
             String imageUrl;
 
             if (!imageSet.getImageDetails().isEmpty()) {
-                imageUrl = imageSet.getImageDetails().get(0).getFileUrl(); // 이미지 리스트가 비어 있지 않은 경우 첫 번째 이미지 URL을 가져옵니다.
+                // 이미지 리스트가 비어 있지 않은 경우 첫 번째 이미지 URL을 가져옵니다.
+                fullImageUrl = s3Uploader.convertToFullUrl(imageSet.getImageDetails().get(0).getFileUrl());
             } else {
-                imageUrl = "defaultImageUrl"; // 이미지 리스트가 비어 있는 경우 기본 이미지 URL을 사용합니다.
+                fullImageUrl = "defaultImageUrl"; // 이미지 리스트가 비어 있는 경우 기본 이미지 URL을 사용합니다.
                 // 'defaultImageUrl'은 실제 기본 이미지 URL로 교체해야 합니다.
             }
 
@@ -50,7 +54,7 @@ public class ItemListResponseMapper {
                     item.getPrice(),
                     item.getMajor(),
                     item.getItemStatus(),
-                    imageUrl,
+                    fullImageUrl,
                     timeAgo
             );
         } else {

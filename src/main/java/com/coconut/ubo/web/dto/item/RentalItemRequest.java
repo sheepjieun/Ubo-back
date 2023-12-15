@@ -31,6 +31,4 @@ public class RentalItemRequest implements ItemImageRequest{
     public List<MultipartFile> getImages() {
         return images;
     }
-
-
 }

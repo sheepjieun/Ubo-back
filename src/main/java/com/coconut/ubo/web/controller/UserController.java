@@ -1,6 +1,7 @@
 package com.coconut.ubo.web.controller;
 
 import com.coconut.ubo.domain.user.User;
+import com.coconut.ubo.repository.user.UserRepository;
 import com.coconut.ubo.service.user.UserServiceImpl;
 import com.coconut.ubo.web.argumentresolver.Login;
 import com.coconut.ubo.web.dto.user.LoginUserRequest;
@@ -28,12 +29,14 @@ public class UserController {
 
     private final UserServiceImpl userService;
     private final UserMapper userMapper;
+    private final UserRepository userRepository;
+
 
     /**
      * 회원가입
      */
     @PostMapping("/signup")
-    public ResponseEntity<String> signUpUser(@RequestBody @Valid SignUpUserRequest request) throws IOException {
+    public ResponseEntity<String> signUpUser(@ModelAttribute @Valid SignUpUserRequest request) throws IOException {
 
         userService.signUp(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 완료되었습니다.");
@@ -64,6 +67,20 @@ public class UserController {
     }
 
     /**
+     * 로그아웃
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body("로그아웃이 완료되었습니다.");
+    }
+
+    /**
      * 마이페이지 내 정보 조회
      */
     @GetMapping("/user/account")
@@ -79,7 +96,7 @@ public class UserController {
 
     @PutMapping("/user/account")
     public ResponseEntity<String> updateUser(@Login User loginUser,
-                                             @RequestBody @Valid UpdateUserRequest request) throws IOException {
+                                              @ModelAttribute @Valid UpdateUserRequest request) throws IOException {
         userService.update(loginUser, request);
         return ResponseEntity.status(HttpStatus.OK).body("회원 수정이 완료되었습니다.");
     }
@@ -96,34 +113,54 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("비밀번호 변경이 완료되었습니다.");
     }
 
+
+
+
+
+
+//    /**
+//     * 마이페이지 내 정보 조회
+//     */
+//    @GetMapping("/user/account")
+//    public ResponseEntity<?> getUserAccount(@Login User loginUser) {
+//
+//        // 세션 대신 하드코딩
+//        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(userMapper.toDto(user));
+//    }
+//
+//
+//    /**
+//     * 회원 정보 수정
+//     */
+//
+//    @PutMapping("/user/account")
+//    public ResponseEntity<String> updateUser(@Login User loginUser,
+//                                             @ModelAttribute @Valid UpdateUserRequest request) throws IOException {
+//        // 세션 대신 하드코딩
+//        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+//
+//        userService.update(user, request);
+//        return ResponseEntity.status(HttpStatus.OK).body("회원 수정이 완료되었습니다.");
+//    }
+//
+//
+//    /**
+//     * 회원 비밀번호 변경
+//     */
+//
+//    @PutMapping("/user/password")
+//    public ResponseEntity<String> updatePassword(@Login User loginUser,
+//                                                 @RequestBody @Valid UpdateUserPasswordRequest request) {
+//        // 세션 대신 하드코딩
+//        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+//
+//        userService.updatePassword(user, request);
+//        return ResponseEntity.status(HttpStatus.OK).body("비밀번호 변경이 완료되었습니다.");
+//    }
+
+
+
 }
 
-/*
-    @PutMapping("/users/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable("id") Long id,
-                                                   @ModelAttribute @Valid UpdateUserRequest request,
-                                                   @Login User loginUser) throws IOException {
-
-        if (userService.verifyUser(loginUser, id)) {
-            UserResponse userResponse = userService.update(loginUser.getId(), request);
-            return ResponseEntity.status(HttpStatus.OK).body(userResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-    }
-*/
-
-/*
-    @PutMapping("/users/{id}/password")
-    public ResponseEntity<String> updatePassword(@PathVariable("id") Long id,
-                                                 @RequestBody @Valid UpdateUserPasswordRequest request,
-                                                 @Login User loginUser) {
-
-        if (userService.verifyUser(loginUser, id)) {
-            userService.updatePassword(id, request);
-            return ResponseEntity.status(HttpStatus.OK).body("비밀번호 변경이 완료되었습니다.");
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
-        }
-    }
-*/

@@ -2,16 +2,14 @@ package com.coconut.ubo.service.user;
 
 import com.coconut.ubo.domain.user.College;
 import com.coconut.ubo.domain.user.User;
-import com.coconut.ubo.service.S3Uploader;
-import com.coconut.ubo.web.dto.user.*;
 import com.coconut.ubo.repository.user.CollegeRepository;
 import com.coconut.ubo.repository.user.UserRepository;
+import com.coconut.ubo.service.S3Uploader;
+import com.coconut.ubo.web.dto.user.*;
 import com.coconut.ubo.web.mapper.UserMapper;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -41,11 +39,12 @@ public class UserServiceImpl implements UserService{
 
         String loginId =  validateDuplicateUser(request); //중복 회원 검증
         College college = validateCollegeName(request); //학교 유효성 검증
+        String imageUrl = s3Uploader.upload(request.getImage(), "profile-images");
 
-        User newUser = userMapper.toEntity(request, loginId, college);
+        User newUser = userMapper.toEntity(request, loginId, college, imageUrl);
         userRepository.save(newUser); //회원 저장
 
-        return newUser.toUserResponse(); // UserResponse 객체 생성 및 반환
+        return newUser.toUserResponse(imageUrl); // UserResponse 객체 생성 및 반환
     }
 
     /**
@@ -67,11 +66,17 @@ public class UserServiceImpl implements UserService{
      * 회원 정보 업데이트
      */
     @Transactional
-    public void update(User user, UpdateUserRequest request) throws IOException {
+    public UserResponse update(User user, UpdateUserRequest request) throws IOException {
 
-        user.updateUser(request.getNickname()); // User 업데이트
+        String imageUrl = s3Uploader.upload(request.getImage(), "profile-images");
+
+        user.updateUser(request.getNickname(), imageUrl); // User 업데이트
         userRepository.save(user); // User 저장
+
+        // UserResponse 객체 생성 및 반환
+        return user.toUserResponse(imageUrl);
     }
+
 
     /**
      * 회원 비밀번호 업데이트

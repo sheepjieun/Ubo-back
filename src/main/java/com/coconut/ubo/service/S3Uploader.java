@@ -1,7 +1,7 @@
 package com.coconut.ubo.service;
 
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -16,9 +16,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -30,10 +32,11 @@ public class S3Uploader {
     // 2. 임시 파일을 S3에 public 읽기 권한으로 업로드, S3에 저장된 파일의 URL 반환
     // 3. 로컬 시스템의 임시 파일 삭제
 
-    private final AmazonS3Client amazonS3Client;
-
+    private final AmazonS3 amazonS3Client;
     @Value("${cloud.aws.s3.bucket}")
     private String bucket; // application.yml 파일에 정의된 S3 버킷 주입
+    @Value("${cloud.aws.s3.base-url}")
+    private String baseUrl; // application.yml 파일에 정의된 S3 버킷 주입
 
     /**
      * S3에 파일 업로드하고, 업로드된 파일 URL 반환
@@ -44,6 +47,7 @@ public class S3Uploader {
      */
     public String upload(MultipartFile multipartFile, String filePath) throws IOException {
 
+
         // MultipartFile -> 로컬 File 변환
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new IllegalArgumentException("[errer] : MultipartFile -> File 변환 실패"));
@@ -52,10 +56,21 @@ public class S3Uploader {
         String fileName = filePath + "/" + UUID.randomUUID();
 
         // S3로 업로드 후 로컬에 저장된 파일 삭제
-        String uploadImageUrl = putS3(uploadFile, fileName);
+        putS3(uploadFile, fileName);
         removeNewFile(uploadFile);
 
-        return uploadImageUrl;
+        return fileName;
+    }
+
+
+    public String convertToFullUrl(String fileName) {
+        return baseUrl + fileName;
+    }
+
+    public List<String> convertToFullUrls(List<String> fileNames) {
+        return fileNames.stream()
+                .map(fileName -> baseUrl + fileName) // 각 fileName 앞에 baseUrl을 붙임
+                .collect(Collectors.toList());
     }
 
 

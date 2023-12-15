@@ -31,11 +31,11 @@ public class ChatController {
      * 채팅방 생성
      */
     @PostMapping("/chat")
-    public ChatRoomResponse createRoom(@Login User loginUser, @RequestBody ChatRoomRequest chatRequest, HttpServletRequest httpServletRequest) throws JsonProcessingException {
+    public ChatRoomResponse createRoom(@Login User loginUser, @RequestBody ChatRoomRequest chatRequest, HttpServletRequest httpServletRequest) throws
+            JsonProcessingException {
 
         return chatRoomService.createRoom(chatRequest, loginUser);
     }
-
 
     /**
      * 채팅방 목록
@@ -46,7 +46,6 @@ public class ChatController {
         return chatRoomService.findAllRoomByUser(loginUser);
     }
 
-
     /**
      * 채팅 내역 조회 ???
      */
@@ -54,7 +53,6 @@ public class ChatController {
     public ResponseEntity<List<ChatMessageDto>> loadChat(@Login User loginUser, @PathVariable String roomId) {
         return ResponseEntity.ok(chatMessageService.loadChat(roomId));
     }
-
 
     /**
      * 채팅방 삭제 (메시지 없이 다른페이지 이동했을 때도 호출되어야 함... )
@@ -66,4 +64,32 @@ public class ChatController {
 
         return ResponseEntity.ok().body("채팅방이 삭제되었습니다.");
     }
+
+
+
+
+//    @PostMapping("/chat")
+//    public ChatRoomResponse createRoom(@RequestBody ChatRoomRequest chatRequest, HttpServletRequest httpServletRequest) throws JsonProcessingException {
+//
+//        User loginUser = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+//        return chatRoomService.createRoom(chatRequest, loginUser);
+//    }
+//
+//
+//    @GetMapping("/chatList")
+//    public List<ChatRoomResponse> findAllRoomByUser(HttpServletRequest httpServletRequest) {
+//
+//        User loginUser = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+//        return chatRoomService.findAllRoomByUser(loginUser);
+//    }
+//
+//    @DeleteMapping("/chat/{roomId}")
+//    public ResponseEntity<String> deleteRoom(@PathVariable Long roomId, HttpServletRequest httpServletRequest) {
+//
+//        User loginUser = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+//
+//        chatRoomService.deleteRoom(roomId, loginUser);
+//
+//        return ResponseEntity.ok().body("채팅방이 삭제되었습니다.");
+//    }
 }

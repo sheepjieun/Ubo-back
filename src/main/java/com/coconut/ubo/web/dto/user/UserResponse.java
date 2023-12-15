@@ -17,5 +17,6 @@ public class UserResponse {
     private String email;
     private String nickname;
     private String college;
+    private String image;
     private UserStatus status;
 }

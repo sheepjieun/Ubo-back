@@ -21,10 +21,10 @@ import java.util.List;
 @Slf4j
 public class LikeController {
     private final LikeRepository likeRepository;
-
     private final UserRepository userRepository;
     private final ItemServiceImpl itemService;
     private final LikeService likeService;
+
 
     /**
      * 좋아요 클릭 시 기능 처리
@@ -78,5 +78,57 @@ public class LikeController {
         List<Item> filteredLikes = likeService.getFilteredLikes(items, sort, tradeAvailOnly);
         return ResponseEntity.ok(itemService.getItemListResponses(filteredLikes, null));
     }
+
+
+
+
+
+//    @PostMapping("/like/{itemId}")
+//    public ResponseEntity<LikeResponse> likeItem(@PathVariable Long itemId) {
+//        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+//
+//        LikeResponse response;
+//        //LikeRepository에서 item, user 확인했는데 값 나옴
+//        if (likeRepository.findByItemIdAndUserId(itemId, user.getId()) != null) {
+//            //좋아요 취소
+//            itemService.decrementLikeCount(itemId); // 좋아요 수 감소
+//            likeService.removeLike(itemId, user.getId()); // like db 삭제
+//            int likeCount = itemService.getLikeCount(itemId); // 좋아요 수 조회
+//            response = new LikeResponse("관심 목록에서 삭제되었습니다.", likeCount);
+//
+//        } else {
+//            // 좋아요 추가
+//            itemService.incrementLikeCount(itemId); // 좋아요 수 증가
+//            likeService.addLike(itemId, user.getId()); // like db 추가
+//            int likeCount = itemService.getLikeCount(itemId); // 좋아요 수 조회
+//            response = new LikeResponse("관심 목록에 추가되었습니다.", likeCount);
+//        }
+//        return ResponseEntity.ok(response);
+//    }
+//
+//    @GetMapping("/user/likes/used")
+//    public ResponseEntity<List<ItemListResponse>> getUserLikesUsed(
+//            @RequestParam(defaultValue = "new") String sort,
+//            @RequestParam(defaultValue = "false") boolean tradeAvailOnly) {
+//
+//        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+//
+//        List<Item> items = likeRepository.findUsedItemsByUserId(user.getId());
+//        List<Item> filteredLikes = likeService.getFilteredLikes(items, sort, tradeAvailOnly);
+//        return ResponseEntity.ok(itemService.getItemListResponses(filteredLikes, null));
+//    }
+//
+//    @GetMapping("/user/likes/rental")
+//    public ResponseEntity<List<ItemListResponse>> getUserLikesRental(
+//            @RequestParam(defaultValue = "new") String sort,
+//            @RequestParam(defaultValue = "false") boolean tradeAvailOnly){
+//
+//        User user = userRepository.findById(1L).orElseThrow(EntityNotFoundException::new);
+//
+//        List<Item> items = likeRepository.findRentalItemsByUserId(user.getId());
+//        List<Item> filteredLikes = likeService.getFilteredLikes(items, sort, tradeAvailOnly);
+//        return ResponseEntity.ok(itemService.getItemListResponses(filteredLikes, null));
+//    }
+
 
 }
