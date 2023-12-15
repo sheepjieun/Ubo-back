@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService{
 
         String imageUrl = s3Uploader.upload(request.getImage(), "profile-images");
 
-        user.updateUser(request.getNickname(), imageUrl); // User 업데이트
+        user.updateUser(request.getNickname()); // User 업데이트
         userRepository.save(user); // User 저장
 
         // UserResponse 객체 생성 및 반환

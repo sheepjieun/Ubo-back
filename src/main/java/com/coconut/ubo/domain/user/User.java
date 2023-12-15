@@ -43,11 +43,12 @@ public class User {
         );
     }
 
+
+
     // user 회원 수정 메서드
-    public void updateUser(String nickname, String image) {
+    public void updateUser(String nickname) {
         this.nickname = nickname;
-        this.image = image;
-    }
+}
     public void updatePassword(String password) {
         this.password = password;
     }

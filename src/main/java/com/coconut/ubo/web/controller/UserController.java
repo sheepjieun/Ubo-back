@@ -70,7 +70,7 @@ public class UserController {
     /**
      * 로그아웃
      */
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
 
         HttpSession session = request.getSession(false);
