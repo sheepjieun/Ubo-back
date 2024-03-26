@@ -1,7 +1,15 @@
 # 교내 학생끼리 안전한 중고 거래 플랫폼, 🧑‍🎓우리학교 보따리상(U-bo)👩‍🎓
 <br>
 
-### 웹서비스 소개
+<img width="700" alt="Untitled" src="https://github.com/sheepjieun/Ubo-back/assets/119403764/578f4f4e-8932-49f4-bdcc-426129f24225">
+
+
+<br>
+<br>
+
+
+### 💻 웹서비스 소개
+---
 
 <br>
 
@@ -31,35 +39,39 @@
 - **회원 정보 변경**
   - 마이페이지-내 정보 에서 유저 이미지, 닉네임, 비밀번호를 변경할 수 있습니다. (아이디, 이메일의 경우 유저의 대학 웹메일과 연동되기 때문에 변경이 불가합니다.) 
 
-<br>
+<br><br>
 
-### 사이트
+### 📕 사이트
+---
 
 **23.12.16 이후로 서버 구동이 중지되었습니다.**
 
 - 서버 링크: https://ourboddari.com
 
-<br>
+<br><br>
 
-### 기획 & 설계
+### 📗 기획 & 설계
+---
 
-- https://jieun97.notion.site/U-bo-5135c1cf6cf141e4839e7e89f7232537?pvs=4
-- 과제 추진 계획서 https://jieun97.notion.site/e3ae6b1c079b4c3b8fcad4e0eac2c54c?pvs=4
-- 기능 명세서 https://jieun97.notion.site/514be2c5f0654f388364cbce677d7dfa?pvs=4
-- DB 명세서 https://jieun97.notion.site/DB-faf028f8403f4feba4061009b53c7eec?pvs=4
-- API 명세서 https://jieun97.notion.site/API-3c6e501c4c234dd0bd0bfc6114b4ea6e?pvs=4
-- 페이지 기획서 https://www.figma.com/files/project/106893732/%25EC%259A%25B0%25EB%25A6%25AC%25ED%2595%2599%25EA%25B5%2590-%25EB%25B3%25B4%25EB%2594%25B0%25EB%25A6%25AC%25EC%2583%2581?fuid=1183747069252297383
-- DB ERDCloud https://www.erdcloud.com/d/EpqpbwnbrmwPe9xQs
+- [과제 추진 계획서](https://jieun97.notion.site/e3ae6b1c079b4c3b8fcad4e0eac2c54c?pvs=4)
+- [기능 명세서](https://jieun97.notion.site/514be2c5f0654f388364cbce677d7dfa?pvs=4)
+- [DB 명세서](https://jieun97.notion.site/DB-faf028f8403f4feba4061009b53c7eec?pvs=4)
+- [API 명세서](https://jieun97.notion.site/API-3c6e501c4c234dd0bd0bfc6114b4ea6e?pvs=4)
+- [페이지 기획서](https://www.figma.com/files/project/106893732/%25EC%259A%25B0%25EB%25A6%25AC%25ED%2595%2599%25EA%25B5%2590-%25EB%25B3%25B4%25EB%2594%25B0%25EB%25A6%25AC%25EC%2583%2581?fuid=1183747069252297383)
+- [DB ERDCloud](https://www.erdcloud.com/d/EpqpbwnbrmwPe9xQs)
   
 
-<br>
+<br><br>
 
-### 개발 기간
-- 2023. 11. 01 - 2023. 12. 21
+### 📘 개발 기간
+---
 
-<br>
+- 2023.11.01 - 2023.12.21
 
-### 기술 스택
+<br><br>
+
+### 📙 기술 스택
+---
 
 #### FE
 - Javascript
@@ -76,14 +88,15 @@
 - Redis
 - AWS - EC2, S3, Route53
 
-<br>
+<br><br>
 
-### 팀원 소개
+### 👩🏻‍💻 팀원 소개
+---
 
 #### FE
-- Jangho Yu
+- [Jangho Yu](https://github.com/jang2714)
 
 #### BE
-- Jieun Yang
+- [Jieun Yang](https://github.com/sheepjieun)
 
-<br>
+<br><br>
